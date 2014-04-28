@@ -9,12 +9,11 @@ int main(int argc, char* argv[])
 	Vector2Tests vector2Test;
 	vector2Test.runAll();
 
+	//Engine::Init();
 
-		//Engine::Init();
+	//RenderUI renderUI;
 
-		//RenderUI renderUI;
-
-		//if( ! renderUI.initialize(argc, argv))
-		//	return -1;
-		//return renderUI.run();
+	//if( ! renderUI.initialize(argc, argv))
+	//	return -1;
+	//return renderUI.run();
 }

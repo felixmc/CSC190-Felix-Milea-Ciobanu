@@ -29,6 +29,7 @@ struct Vector2 {
 	Vector2 operator- (const Vector2& other) const;
 	Vector2 operator* (float s) const;
 	Vector2 operator/ (float s) const;
+	bool operator== (const Vector2& other) const;
 
 	// friend operators
 	friend ostream& operator<< (ostream& stream, const Vector2& v);
