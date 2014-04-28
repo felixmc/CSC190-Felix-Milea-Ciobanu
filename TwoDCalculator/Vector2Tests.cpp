@@ -98,27 +98,32 @@ void Vector2Tests::testLengthSquared() {
 	assert(result == 25);
 }
 
-void Vector2Tests::testNormalize() {}
+void Vector2Tests::testNormalize() {
+	Vector2 v1(2,4);
+	Vector2 result = v1.normalize();
+	assert(result == (v1 / v1.length()));
+}
+
 void Vector2Tests::testperpCW() {}
 void Vector2Tests::testPerpCCW() {}
 
 // test binary operators
 void Vector2Tests::testSum() {
-	Vector2 op1(1, 2);
-	Vector2 op2(2, 3);
+	Vector2 op1(1,2);
+	Vector2 op2(2,3);
 	Vector2 result = op1 + op2;
 	assert(result == Vector2(3, 5));
 }
 
 void Vector2Tests::testDifference() {
-	Vector2 op1(3, 7);
-	Vector2 op2(2, 3);
+	Vector2 op1(3,7);
+	Vector2 op2(2,3);
 	Vector2 result = op1 - op2;
 	assert(result == Vector2(1, 4));
 }
 
 void Vector2Tests::testMultiplication() {
-	Vector2 v(3, 7);
+	Vector2 v(3,7);
 	float s = 3;
 	Vector2 result = v * s;
 	assert(result == Vector2(9, 21));

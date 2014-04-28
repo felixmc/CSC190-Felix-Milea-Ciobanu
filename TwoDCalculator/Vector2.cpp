@@ -33,9 +33,12 @@ float Vector2::lengthSquared() const {
 	return this->dot(*this);
 }
 
-//Vector2 normalize() const;
-//Vector2 perpCW() const;
-//Vector2 perpCCW() const;
+Vector2 Vector2::normalize() const {
+	return *this / this->length();
+}
+
+//Vector2 Vector2::perpCW() const;
+//Vector2 Vector2::perpCCW() const;
 
 // binary operators
 Vector2 Vector2::operator+ (const Vector2& other) const {
