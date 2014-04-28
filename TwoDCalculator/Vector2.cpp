@@ -7,11 +7,17 @@ Vector2 Vector2::lerp(const Vector2& v1, const Vector2& v2, float b) {
 	return ((1 - b) * v1) + (b * v2);
 }
 
-//static Vector2 dot(const Vector2& v1, const Vector2& v2);
+float Vector2::dot(const Vector2& v1, const Vector2& v2) {
+	return (v1.x * v2.x) + (v1.y * v2.y);
+}
+
 //static Vector2 cross(const Vector2& v1, const Vector2& v2);
 
-//// instance functions
-//Vector2 dot(const Vector2&) const;
+// instance functions
+float Vector2::dot(const Vector2& v2) const {
+	return Vector2::dot(*this, v2);
+}
+
 //Vector2 cross(const Vector2&) const;
 //float length() const;
 //float lengthSquared() const;

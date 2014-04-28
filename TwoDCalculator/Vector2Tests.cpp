@@ -57,11 +57,23 @@ void Vector2Tests::testLerp() {
 	assert(result == Vector2(3, 3));
 }
 
-void Vector2Tests::testStaticDotProduct() {}
+void Vector2Tests::testStaticDotProduct() {
+	Vector2 v1(3,2);
+	Vector2 v2(5,7);
+	float result = Vector2::dot(v1, v2);
+	assert(result == 29);
+}
+
 void Vector2Tests::testStaticCrossProduct() {}
 
 // test instance methods
-void Vector2Tests::testDotProduct() {}
+void Vector2Tests::testDotProduct() {
+	Vector2 v1(3,2);
+	Vector2 v2(5,7);
+	float result = v1.dot(v2);
+	assert(result == 29);
+}
+
 void Vector2Tests::testCrossProduct() {}
 void Vector2Tests::testLength() {}
 void Vector2Tests::testLengthSquared() {}
