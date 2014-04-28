@@ -1,13 +1,20 @@
 #include "RenderUI.h"
 #include "Engine.h"
 
+#include "Vector2Tests.h"
+
+
 int main(int argc, char* argv[])
 {
-	Engine::Init();
+	Vector2Tests vector2Test;
+	vector2Test.runAll();
 
-	RenderUI renderUI;
 
-	if( ! renderUI.initialize(argc, argv))
-		return -1;
-	return renderUI.run();
+		//Engine::Init();
+
+		//RenderUI renderUI;
+
+		//if( ! renderUI.initialize(argc, argv))
+		//	return -1;
+		//return renderUI.run();
 }

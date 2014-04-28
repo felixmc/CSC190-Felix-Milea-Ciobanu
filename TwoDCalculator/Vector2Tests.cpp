@@ -5,7 +5,6 @@ using std::cout;
 using std::endl;
 
 void Vector2Tests::runAll() {
-	cout << "testing all" << endl;
 	testNormalize();
 	testSum();
 	testDifference();

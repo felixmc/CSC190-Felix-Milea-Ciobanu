@@ -35,6 +35,4 @@ struct Vector2 {
 	friend Vector2 operator* (float div, const Vector2& v);
 };
 
-
-
 #endif
