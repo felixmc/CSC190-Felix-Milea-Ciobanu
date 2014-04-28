@@ -64,7 +64,12 @@ void Vector2Tests::testStaticDotProduct() {
 	assert(result == 29);
 }
 
-void Vector2Tests::testStaticCrossProduct() {}
+void Vector2Tests::testStaticCrossProduct() {
+	Vector2 v1(3,2);
+	Vector2 v2(5,7);
+	float result = Vector2::cross(v1, v2);
+	assert(result == 11);
+}
 
 // test instance methods
 void Vector2Tests::testDotProduct() {
@@ -74,7 +79,13 @@ void Vector2Tests::testDotProduct() {
 	assert(result == 29);
 }
 
-void Vector2Tests::testCrossProduct() {}
+void Vector2Tests::testCrossProduct() {
+	Vector2 v1(3,2);
+	Vector2 v2(5,7);
+	float result = v1.cross(v2);
+	assert(result == 11);
+}
+
 void Vector2Tests::testLength() {}
 void Vector2Tests::testLengthSquared() {}
 void Vector2Tests::testNormalize() {}

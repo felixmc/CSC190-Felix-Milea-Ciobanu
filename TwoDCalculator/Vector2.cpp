@@ -11,14 +11,19 @@ float Vector2::dot(const Vector2& v1, const Vector2& v2) {
 	return (v1.x * v2.x) + (v1.y * v2.y);
 }
 
-//static Vector2 cross(const Vector2& v1, const Vector2& v2);
+float Vector2::cross(const Vector2& v1, const Vector2& v2) {
+	return (v1.x * v2.y) - (v1.y * v2.x);
+}
 
 // instance functions
 float Vector2::dot(const Vector2& v2) const {
 	return Vector2::dot(*this, v2);
 }
 
-//Vector2 cross(const Vector2&) const;
+float Vector2::cross(const Vector2& v2) const {
+	return Vector2::cross(*this, v2);
+}
+
 //float length() const;
 //float lengthSquared() const;
 //Vector2 normalize() const;

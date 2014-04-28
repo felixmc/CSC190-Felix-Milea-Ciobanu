@@ -13,11 +13,11 @@ struct Vector2 {
 	// static functions
 	static Vector2 lerp(const Vector2& v1, const Vector2& v2, float s);
 	static float dot(const Vector2& v1, const Vector2& v2);
-	static Vector2 cross(const Vector2& v1, const Vector2& v2);
+	static float cross(const Vector2& v1, const Vector2& v2);
 
 	// instance functions
 	float dot(const Vector2& v2) const;
-	Vector2 cross(const Vector2& v2) const;
+	float cross(const Vector2& v2) const;
 	float length() const;
 	float lengthSquared() const;
 	Vector2 normalize() const;
