@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Vector2.h"
 
 Vector2::Vector2(float xv, float yv) : x(xv), y(yv) {};
@@ -24,8 +25,14 @@ float Vector2::cross(const Vector2& v2) const {
 	return Vector2::cross(*this, v2);
 }
 
-//float length() const;
-//float lengthSquared() const;
+float Vector2::length() const {
+	return std::sqrt(this->lengthSquared());
+}
+
+float Vector2::lengthSquared() const {
+	return this->dot(*this);
+}
+
 //Vector2 normalize() const;
 //Vector2 perpCW() const;
 //Vector2 perpCCW() const;

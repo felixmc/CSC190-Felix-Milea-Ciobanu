@@ -86,8 +86,18 @@ void Vector2Tests::testCrossProduct() {
 	assert(result == 11);
 }
 
-void Vector2Tests::testLength() {}
-void Vector2Tests::testLengthSquared() {}
+void Vector2Tests::testLength() {
+	Vector2 v1(3,4);
+	float result = v1.length();
+	assert(result == 5);
+}
+
+void Vector2Tests::testLengthSquared() {
+	Vector2 v1(3,4);
+	float result = v1.lengthSquared();
+	assert(result == 25);
+}
+
 void Vector2Tests::testNormalize() {}
 void Vector2Tests::testperpCW() {}
 void Vector2Tests::testPerpCCW() {}
