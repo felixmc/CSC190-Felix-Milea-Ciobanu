@@ -49,7 +49,14 @@ void Vector2Tests::testConstructor() {
 }
 
 // test static methods
-void Vector2Tests::testLerp() {}
+void Vector2Tests::testLerp() {
+	Vector2 v1(0,0);
+	Vector2 v2(10,10);
+	float b = .3f;
+	Vector2 result = Vector2::lerp(v1, v2, b);
+	assert(result == Vector2(3, 3));
+}
+
 void Vector2Tests::testStaticDotProduct() {}
 void Vector2Tests::testStaticCrossProduct() {}
 

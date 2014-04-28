@@ -2,8 +2,11 @@
 
 Vector2::Vector2(float xv, float yv) : x(xv), y(yv) {};
 
-//// static functions
-//static Vector2 lerp(const Vector2& v1, const Vector2& v2, float s);
+// static functions
+Vector2 Vector2::lerp(const Vector2& v1, const Vector2& v2, float b) {
+	return ((1 - b) * v1) + (b * v2);
+}
+
 //static Vector2 dot(const Vector2& v1, const Vector2& v2);
 //static Vector2 cross(const Vector2& v1, const Vector2& v2);
 
@@ -45,10 +48,3 @@ ostream& operator<< (ostream& stream, const Vector2& v) {
 Vector2 operator* (float s, const Vector2& v) {
 	return v * s;
 }
-
-
-//
-//	float length() const {
-//		static const float length = 1;
-//		return length;
-//	}
