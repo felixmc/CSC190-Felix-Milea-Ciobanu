@@ -2,8 +2,7 @@
 #define VECTOR2_H
 
 #include <iostream>
-
-using std::ostream;
+#include <cmath>
 
 struct Vector2 {
 	const float x;
@@ -46,11 +45,11 @@ struct Vector2 {
 	}
 
 	inline Vector2 perpCW() const {
-		return Vector2();
+		return Vector2(this->y,-this->x);
 	}
 
 	inline Vector2 perpCCW() const {
-		return Vector2();
+		return Vector2(-this->y,this->x);
 	}
 
 
@@ -81,7 +80,7 @@ struct Vector2 {
 		return v * s;
 	}
 
-	inline friend ostream& operator<< (ostream& stream, const Vector2& v) {
+	inline friend std::ostream& operator<< (std::ostream& stream, const Vector2& v) {
 		return stream << "{" << v.x << ", " << v.y << "}";
 	}
 

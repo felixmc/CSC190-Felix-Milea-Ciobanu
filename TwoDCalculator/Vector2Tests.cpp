@@ -105,11 +105,11 @@ void Vector2Tests::testNormalize() {
 }
 
 void Vector2Tests::testperpCW() {
-
+	assert(Vector2(3,4).perpCW() == Vector2(4,-3));
 }
 
 void Vector2Tests::testPerpCCW() {
-
+	assert(Vector2(3,4).perpCCW() == Vector2(-4,3));
 }
 
 // test binary operators
