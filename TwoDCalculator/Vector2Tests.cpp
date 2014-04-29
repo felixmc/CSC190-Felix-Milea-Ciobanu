@@ -104,8 +104,13 @@ void Vector2Tests::testNormalize() {
 	assert(result == (v1 / v1.length()));
 }
 
-void Vector2Tests::testperpCW() {}
-void Vector2Tests::testPerpCCW() {}
+void Vector2Tests::testperpCW() {
+
+}
+
+void Vector2Tests::testPerpCCW() {
+
+}
 
 // test binary operators
 void Vector2Tests::testSum() {
