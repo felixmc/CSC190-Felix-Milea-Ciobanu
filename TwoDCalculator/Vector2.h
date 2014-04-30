@@ -5,8 +5,8 @@
 #include <cmath>
 
 struct Vector2 {
-	const float x;
-	const float y;
+	float x;
+	float y;
 	Vector2(float xv = 0, float yv = 0) : x(xv), y(yv) {};
 
 	// static functions
@@ -62,21 +62,27 @@ struct Vector2 {
 		return Vector2(this->x - other.x, this->y - other.y);
 	}
 
-	inline Vector2 operator* (float s) const {
+	inline Vector2 operator* (const float s) const {
 		return Vector2(this->x * s, this->y * s);
 	}
 
-	inline Vector2 operator/ (float s) const {
-		return Vector2(this->x / s, this->y / s);
+	inline Vector2 operator/ (const float s) const {
+		if(s == 0) return Vector2();
+		else return Vector2(this->x / s, this->y / s);
 	}
 
 	inline bool operator== (const Vector2& other) const {
 		return this->x == other.x && this->y == other.y;
 	}
 
+	inline void operator= (const Vector2& other) {
+		this->x = other.x;
+		this->y = other.y;
+	}
+
 
 	// friend operators
-	inline friend Vector2 operator* (float s, const Vector2& v) {
+	inline friend Vector2 operator* (const float s, const Vector2& v) {
 		return v * s;
 	}
 

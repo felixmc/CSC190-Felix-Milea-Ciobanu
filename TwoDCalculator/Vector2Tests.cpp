@@ -6,6 +6,12 @@
 using std::cout;
 using std::endl;
 
+int main()
+{
+	Vector2Tests vector2Test;
+	vector2Test.runAll();
+}
+
 void Vector2Tests::runAll() {
 	testConstructor();
 

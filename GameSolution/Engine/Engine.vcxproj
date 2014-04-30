@@ -88,10 +88,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\TwoDCalculator\Vector2Tests.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Engine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\TwoDCalculator\Vector2.h" />
+    <ClInclude Include="..\..\TwoDCalculator\Vector2Tests.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="ExportHeader.h" />
   </ItemGroup>
