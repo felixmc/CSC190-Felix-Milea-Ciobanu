@@ -34,7 +34,7 @@ void lineEquationCallback(const LineEquationData& data) {
 void dotProductCallback(const DotProductData& data) {
 	vector1 = Vector2(data.v1i, data.v1j);
 	vector2 = Vector2(data.v2i, data.v2j);
-	if (data.projectOntoLeftVector) {
+	if (!data.projectOntoLeftVector) {
 		projection = (vector1.dot(vector2) / vector2.lengthSquared()) * vector2;
 		rejection = vector1 - projection;
 	} else {
