@@ -17,8 +17,7 @@ void draw(Core::Graphics& graphics) {
 	graphics.DrawLine(10,10,400,300);
 }
 
-int main()
-{
+int main() {
 	Core::Init("Game Demo", SCREEN_WIDTH, SCREEN_HEIGHT);
 	Core::RegisterUpdateFn(update);
 	Core::RegisterDrawFn(draw);
