@@ -9,7 +9,7 @@ namespace Engine {
 	using std::min;
 	using std::max;
 
-	#define SHAPE(arr) Shape(sizeof(arr)/sizeof(Vector2), arr)
+	#define SHAPE(arr) new Shape(sizeof(arr)/sizeof(Vector2), arr)
 
 	struct Shape {
 		const Vector2 * points;
@@ -19,7 +19,7 @@ namespace Engine {
 			
 		}
 
-		float getMostLeft() {
+		float getMostLeft() const {
 			float most = 0;
 			for (int i = 0; i < size; i++) {
 				most = min(most, points[i].x);
@@ -27,7 +27,7 @@ namespace Engine {
 			return most;
 		}
 
-		float getMostRight() {
+		float getMostRight() const {
 			float most = 0;
 			for (int i = 0; i < size; i++) {
 				most = max(most, points[i].x);
@@ -35,7 +35,7 @@ namespace Engine {
 			return most;
 		}
 
-		float getMostUp() {
+		float getMostUp() const {
 			float most = 0;
 			for (int i = 0; i < size; i++) {
 				most = min(most, points[i].y);
@@ -43,7 +43,7 @@ namespace Engine {
 			return most;
 		}
 		
-		float getMostDown() {
+		float getMostDown() const {
 			float most = 0;
 			for (int i = 0; i < size; i++) {
 				most = max(most, points[i].y);
@@ -51,11 +51,11 @@ namespace Engine {
 			return most;
 		}
 
-		float getWidth() {
+		float getWidth() const {
 			return abs(getMostLeft()) + getMostRight();
 		}
 
-		float getHeight() {
+		float getHeight() const {
 			return abs(getMostUp()) + getMostDown();
 		}
 

@@ -10,7 +10,7 @@ namespace Engine {
 		Vector2 position, velocity, acceleration;
 		const Shape shape;
 
-		GameObject(const Vector2 startPos, const Shape _shape) : position(startPos), shape(_shape) {}
+		GameObject(const Vector2 startPos, const Shape& _shape) : position(startPos), shape(_shape) {}
 		
 		void update(float dt) {
 			velocity += acceleration * dt;

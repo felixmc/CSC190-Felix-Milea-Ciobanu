@@ -11,8 +11,9 @@ namespace Engine {
 		inline void operator= (const PositionWrapper& other) const { other; }
 	public:
 		PositionWrapper(int w, int h) : width(w), height(h) {}
-		void reposition(GameObject& o) {
-			Shape shape = o.shape;
+		void reposition(GameObject& o, float df) {
+			df;
+			const Shape& shape = o.shape;
 
 			// is offscreen left
 			if (o.position.x < 0 - shape.getMostRight()) {

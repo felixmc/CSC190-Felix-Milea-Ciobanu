@@ -10,7 +10,7 @@ namespace Engine {
 		inline void operator= (const PositionManager& other) const { other; }
 	
 	public:
-		virtual void reposition(GameObject&) = 0;
+		virtual void reposition(GameObject&, float) = 0;
 	};
 
 }

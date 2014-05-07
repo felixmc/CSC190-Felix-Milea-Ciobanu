@@ -16,28 +16,21 @@ struct PlayerShip : GameObject {
 	void registerMoveRight(ShipController);
 	void registerMoveUp(ShipController);
 	void registerMoveDown(ShipController);
-	void registerStopX(ShipController);
-	void registerStopY(ShipController);
 
 	void update(float);
 
 private:
 	static const float BASE_V;
+	static const float FRICTION;
 	static const float MAX_V;
 
 	ShipController moveLeftController;
 	ShipController moveRightController;
 	ShipController moveUpController;
 	ShipController moveDownController;
-	ShipController stopXController;
-	ShipController stopYController;
 
-	void moveLeft();
-	void moveRight();
-	void moveUp();
-	void moveDown();
-	void stopX();
-	void stopY();
+	void moveX();
+	void moveY();
 };
 
 #endif
