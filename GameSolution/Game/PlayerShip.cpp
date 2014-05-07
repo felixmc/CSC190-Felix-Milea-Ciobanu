@@ -2,6 +2,7 @@
 #include "Shape.h"
 #include <cmath>
 
+// this should make the ship 59x59 pixels
 static Vector2 ship[] = {
 	// top
 	Vector2(0,-29),
@@ -18,10 +19,10 @@ static Vector2 ship[] = {
 	Vector2(-29,22),Vector2(-27,1),Vector2(-25,14),Vector2(-3,-4)
 };
 
-const float PlayerShip::BASE_V = .3f;
-const float PlayerShip::MAX_V = 8.0f;
+const float PlayerShip::BASE_V = 25.f;
+const float PlayerShip::MAX_V = 170.0f;
 
-PlayerShip::PlayerShip(Vector2& startPos)
+PlayerShip::PlayerShip(Vector2 startPos)
 : GameObject(startPos, SHAPE(ship)) {}
 
 void PlayerShip::update(float dt) {

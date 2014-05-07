@@ -10,7 +10,7 @@ typedef bool (*ShipController)();
 
 /* A bit more code, but decoupled ship control from keyboard */
 struct PlayerShip : GameObject {
-	PlayerShip(Vector2&);
+	PlayerShip(Vector2);
 
 	void registerMoveLeft(ShipController);
 	void registerMoveRight(ShipController);

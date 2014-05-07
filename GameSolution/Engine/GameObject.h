@@ -2,7 +2,6 @@
 #define _GAMEOBJECT_H_
 
 #include "Core.h"
-#include "Vector2.h"
 #include "Shape.h"
 
 namespace Engine {
@@ -11,11 +10,11 @@ namespace Engine {
 		Vector2 position, velocity, acceleration;
 		const Shape shape;
 
-		GameObject(const Vector2& startPos, const Shape _shape) : position(startPos), shape(_shape) {}
+		GameObject(const Vector2 startPos, const Shape _shape) : position(startPos), shape(_shape) {}
+		
 		void update(float dt) {
-			dt;
-			velocity += acceleration;
-			position += velocity;
+			velocity += acceleration * dt;
+			position += velocity * dt;
 		}
 
 		virtual void draw(Core::Graphics& g)  {
