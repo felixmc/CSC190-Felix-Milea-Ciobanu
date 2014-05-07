@@ -4,10 +4,7 @@ namespace Engine
 {
 	void Init()
 	{
+
 	}
 
-	bool sampleFunctionThatReturnsTrue()
-	{
-		return true;
-	}
 }

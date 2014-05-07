@@ -1,36 +1,35 @@
-#ifndef GAMEOBJECT_H
-#define GAMEOBJECT_H
+#ifndef _GAMEOBJECT_H_
+#define _GAMEOBJECT_H_
 
+#include "Core.h"
 #include "Vector2.h"
+#include "Shape.h"
 
-class GameObject {
-	Vector2 position, velocity, acceleration;
+namespace Engine {
 
+	struct GameObject {
+		Vector2 position, velocity, acceleration;
+		const Shape shape;
 
-public:
-	GameObject(const Vector2& startPos) : position(startPos) {
-	
-	}
+		GameObject(const Vector2& startPos, const Shape _shape) : position(startPos), shape(_shape) {}
+		void update(float dt) {
+			dt;
+			velocity += acceleration;
+			position += velocity;
+		}
 
-	void update(float dt) {
-	
-	}
+		virtual void draw(Core::Graphics& g)  {
+			for (int i = 0; i < shape.size; i++) {
+				Vector2 p1 = shape.points[i] + position;
+				Vector2 p2 = shape.points[(i + 1) % shape.size] + position;
+				g.DrawLine(p1.x, p1.y, p2.x, p2.y);
+			}
+		}
 
-	void draw() {
-	
-	}
-
-	Vector2 getPosition() {
-		return position;
-	}
-
-	Vector2 getVelocity() {
-		return velocity;
-	}
-
-	Vector2 getAcceleration() {
-		return acceleration;
-	}
-};
+		virtual inline GameObject operator= (const GameObject& other) const {
+			return other;
+		}
+	};
+}
 
 #endif

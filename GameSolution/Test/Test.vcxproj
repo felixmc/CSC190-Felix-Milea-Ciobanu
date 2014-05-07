@@ -93,6 +93,10 @@
     <ClCompile Include="..\gtest\src\gtest-all.cc" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SampleTest.cpp" />
+    <ClCompile Include="Vector2Tests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Vector2Tests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
