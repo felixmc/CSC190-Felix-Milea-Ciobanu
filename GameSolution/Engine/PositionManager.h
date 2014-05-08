@@ -6,11 +6,17 @@
 namespace Engine {
 
 	class PositionManager {
-
 		inline void operator= (const PositionManager& other) const { other; }
 	
+	protected:
+		bool isReset;
+
 	public:
 		virtual void reposition(GameObject&, float) = 0;
+		
+		void reset() {
+			isReset = true;
+		}
 	};
 
 }

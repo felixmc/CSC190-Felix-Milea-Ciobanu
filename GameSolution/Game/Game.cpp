@@ -67,10 +67,16 @@ namespace Game {
 		player->update(dt);
 		posManagers[posManIndex]->reposition(*player, dt);
 
+		int oldPos = posManIndex;
+
 		// TODO: decouple/abstract this
 		if(Input::IsPressed(49)) posManIndex = 0; // wrap around
 		if(Input::IsPressed(50)) posManIndex = 1; // bounce
 		if(Input::IsPressed(51)) posManIndex = 2; // border
+
+		if (oldPos != posManIndex) {
+			posManagers[posManIndex]->reset();
+		}
 
 		return Input::IsPressed(Input::KEY_ESCAPE);
 	}

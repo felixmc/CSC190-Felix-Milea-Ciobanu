@@ -14,15 +14,22 @@ namespace Engine {
 	public:
 		PositionBoundary(Shape& shp) : shape(shp) {}
 		void reposition(GameObject& o, float df) {
+			bool isIn = true;
 			for (int i = 0; i < shape.size; i++) {
 				Vector2 p1 = shape.points[i];
 				Vector2 p2 = shape.points[(i + 1) % shape.size];
 				Vector2 norm = (p2 - p1).perpCCW().normalize();
 				float dp = (o.position - p1).dot(norm);
-				if (dp <= 0) {
+				if (dp <= 0 && !isReset) {
 					o.position -= (o.velocity * df);
 					o.velocity -= 2 * (o.velocity.dot(norm)) * norm;
 				}
+				
+				isIn = isIn && (dp > 0 && isReset);
+			}
+
+			if (isIn) {
+				isReset = false;
 			}
 		}
 
