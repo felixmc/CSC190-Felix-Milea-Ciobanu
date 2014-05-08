@@ -5,6 +5,7 @@
 #include "PositionBouncer.h"
 #include "PositionBoundary.h"
 #include "Shape.h"
+#include "DrawValue.h"
 //#include <vector>
 
 using Core::Input;
@@ -35,6 +36,14 @@ namespace Game {
 	const Vector2 * center;
 	PlayerShip * player;
 	LerpEnemy * lerper;
+
+	void drawInstuctions(Core::Graphics& g) {
+		g.SetColor(RGB(255,255,255));
+		int x = 40;
+		g.DrawString(x, 20, "Press 1, 2, or 3 to change borders.");
+		g.DrawString(x, 60, "Ship position:");
+		Engine::drawValue(g, x, 80, player->position);
+	}
 
 	void setup() {
 		center = new Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
@@ -82,6 +91,8 @@ namespace Game {
 				g.DrawLine(p1.x, p1.y, p2.x, p2.y);
 			}
 		}
+
+		drawInstuctions(g);
 	}
 
 }

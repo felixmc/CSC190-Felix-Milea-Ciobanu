@@ -58,5 +58,8 @@
     <ClInclude Include="PositionBoundary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DrawValue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
