@@ -108,6 +108,7 @@
     <ClInclude Include="PositionWrapper.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,8 +7,7 @@
 namespace Engine {
 
 	struct Vector2 {
-		float x;
-		float y;
+		float x, y;
 		Vector2() : x(0), y(0) {};
 		explicit Vector2(float d) : x(d), y(d) {};
 		explicit Vector2(float xv, float yv) : x(xv), y(yv) {};
