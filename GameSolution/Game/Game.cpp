@@ -82,7 +82,6 @@ namespace Game {
 	}
 
 	void draw(Core::Graphics& g) {
-		g.SetColor(RGB(0,255,0));
 		player->draw(g);
 
 		g.SetColor(RGB(255,48,0));

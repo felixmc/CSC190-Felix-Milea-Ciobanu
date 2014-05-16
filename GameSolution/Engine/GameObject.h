@@ -9,6 +9,7 @@
 namespace Engine {
 
 	struct GameObject {
+		float rotation;
 		Vector2 position, velocity, acceleration;
 		const Shape shape;
 
@@ -34,9 +35,6 @@ namespace Engine {
 		virtual inline GameObject operator= (const GameObject& other) const {
 			return other;
 		}
-		
-	protected:
-		float rotation;
 	};
 }
 

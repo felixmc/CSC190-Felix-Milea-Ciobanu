@@ -18,8 +18,11 @@ struct PlayerShip : GameObject {
 	void registerMoveDown(ShipController);
 
 	void update(float);
+	void draw(Core::Graphics&);
 
 private:
+	GameObject* gun;
+
 	static const float BASE_A;
 	static const float MAX_V;
 	static const float ROT_D;

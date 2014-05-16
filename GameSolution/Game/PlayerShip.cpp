@@ -1,5 +1,6 @@
 #include "PlayerShip.h"
 #include "Shape.h"
+#include "Core.h"
 #include <cmath>
 
 // this should make the ship 59x59 pixels
@@ -19,6 +20,8 @@ static Vector2 ship[] = {
 	Vector2(-29,22),Vector2(-27,1),Vector2(-25,14),Vector2(-3,-4)
 };
 
+static Vector2 gunShape[] = { Vector2(0, -4), Vector2(2, 3), Vector2(-2, 3) };
+
 const float PlayerShip::BASE_A = 25.f;
 const float PlayerShip::MAX_V = 350.0f;
 const float PlayerShip::ROT_D = 0.04f;
@@ -26,7 +29,9 @@ const float PlayerShip::SPEED = 5000.0f;
 const float PlayerShip::FRICTION = 30.0f;
 
 PlayerShip::PlayerShip(Vector2 startPos)
-: GameObject(startPos, *SHAPE(ship)) {}
+: GameObject(startPos, *SHAPE(ship)) {
+	gun = new GameObject(startPos, *SHAPE(gunShape));
+}
 
 void PlayerShip::update(float dt) {
 	rotate();
@@ -39,6 +44,19 @@ void PlayerShip::update(float dt) {
 	velocity.y = velocity.y > 0 ? min(MAX_V, velocity.y) : max(-MAX_V, velocity.y);
 
 	position += velocity * dt;
+
+	int mX, mY;
+	Core::Input::GetMousePos(mX, mY);
+	gun->position = position;
+	Vector2 diff = (Vector2((float)mX, (float)mY) - gun->position).perpCW();
+	gun->rotation = atan2(-diff.y, -diff.x);
+}
+
+void PlayerShip::draw(Core::Graphics& g) {
+	g.SetColor(RGB(255,255,0));
+	gun->draw(g);
+	g.SetColor(RGB(0,255,0));
+	GameObject::draw(g);
 }
 
 void PlayerShip::rotate() {
