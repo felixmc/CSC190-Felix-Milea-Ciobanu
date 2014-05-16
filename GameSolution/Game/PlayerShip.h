@@ -28,6 +28,7 @@ private:
 	static const float ROT_D;
 	static const float SPEED;
 	static const float FRICTION;
+	static const float TURRET_OFFSET;
 
 	ShipController rotateLeftController;
 	ShipController rotateRightController;

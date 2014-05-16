@@ -25,8 +25,9 @@ static Vector2 gunShape[] = { Vector2(0, -4), Vector2(2, 3), Vector2(-2, 3) };
 const float PlayerShip::BASE_A = 25.f;
 const float PlayerShip::MAX_V = 350.0f;
 const float PlayerShip::ROT_D = 0.04f;
-const float PlayerShip::SPEED = 5000.0f;
-const float PlayerShip::FRICTION = 30.0f;
+const float PlayerShip::SPEED = 7000.0f;
+const float PlayerShip::FRICTION = 50.0f;
+const float PlayerShip::TURRET_OFFSET = 5.0f;
 
 PlayerShip::PlayerShip(Vector2 startPos)
 : GameObject(startPos, *SHAPE(ship)) {
@@ -45,9 +46,10 @@ void PlayerShip::update(float dt) {
 
 	position += velocity * dt;
 
+	// turret logic
 	int mX, mY;
 	Core::Input::GetMousePos(mX, mY);
-	gun->position = position;
+	gun->position = position + (Vector2(-sin(rotation), cos(rotation)) * TURRET_OFFSET);
 	Vector2 diff = (Vector2((float)mX, (float)mY) - gun->position).perpCW();
 	gun->rotation = atan2(-diff.y, -diff.x);
 }
