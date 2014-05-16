@@ -10,7 +10,7 @@ namespace Engine {
 		const float x1, x2, y1, y2;
 
 		Matrix2() : x1(1), y1(0), x2(0), y2(1) {}
-		Matrix2(Vector2& v1, Vector2& v2) : x1(v1.x), y1(v1.y), x2(v2.x), y2(v2.y) {}
+		Matrix2(const Vector2& v1, const Vector2& v2) : x1(v1.x), y1(v1.y), x2(v2.x), y2(v2.y) {}
 
 		static Matrix2 rotation(float a) {
 			return Matrix2(Vector2(cos(a), sin(a)), Vector2(-sin(a), cos(a)));
@@ -28,12 +28,12 @@ namespace Engine {
 			return Matrix2(Vector2(1, 0), Vector2(0, s));		
 		}
 
-		inline Matrix2 operator*(Matrix2& m) {
+		inline Matrix2 operator*(const Matrix2& m) {
 			return Matrix2(Vector2(x1 * m.x1 + x2 * m.y1, y1 * m.x1 + y2 * m.y1)
 				, Vector2(x1 * m.x2 + x2*m.y2, y1*m.x2+y2*m.y2));
 		}
 		
-		inline Vector2 operator*(Vector2& v) {
+		inline Vector2 operator*(const Vector2& v) {
 			return Vector2(x1*v.x + x2*v.y, y1*v.x + y2*v.y);
 		}
 

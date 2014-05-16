@@ -56,8 +56,8 @@ namespace Game {
 		
 		//gameObjects->push_back(*player);
 
-		player->registerMoveLeft([](){ return Input::IsPressed(Input::KEY_LEFT); });
-		player->registerMoveRight([](){ return Input::IsPressed(Input::KEY_RIGHT); });
+		player->registerRotateLeft([](){ return Input::IsPressed(Input::KEY_LEFT); });
+		player->registerRotateRight([](){ return Input::IsPressed(Input::KEY_RIGHT); });
 		player->registerMoveUp([](){ return Input::IsPressed(Input::KEY_UP); });
 		player->registerMoveDown([](){ return Input::IsPressed(Input::KEY_DOWN); });
 	}

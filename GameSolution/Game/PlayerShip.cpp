@@ -19,44 +19,48 @@ static Vector2 ship[] = {
 	Vector2(-29,22),Vector2(-27,1),Vector2(-25,14),Vector2(-3,-4)
 };
 
-const float PlayerShip::BASE_V = 25.f;
-const float PlayerShip::FRICTION = 5.f;
+const float PlayerShip::BASE_A = 25.f;
 const float PlayerShip::MAX_V = 350.0f;
+const float PlayerShip::ROT_D = 0.04f;
+const float PlayerShip::SPEED = 5000.0f;
+const float PlayerShip::FRICTION = 30.0f;
 
 PlayerShip::PlayerShip(Vector2 startPos)
 : GameObject(startPos, *SHAPE(ship)) {}
 
 void PlayerShip::update(float dt) {
-	moveX();
-	moveY();
-	GameObject::update(dt);
+	rotate();
+	move(dt);
+	
+	velocity += acceleration * dt;
+
+	// max out velocity
+	velocity.x = velocity.x > 0 ? min(MAX_V, velocity.x) : max(-MAX_V, velocity.x);
+	velocity.y = velocity.y > 0 ? min(MAX_V, velocity.y) : max(-MAX_V, velocity.y);
+
+	position += velocity * dt;
 }
 
-void PlayerShip::moveX() {
-	if (moveLeftController != NULL && moveLeftController())
-		velocity.x = max(-MAX_V, velocity.x - BASE_V);
-	else if (moveRightController != NULL && moveRightController())
-		velocity.x = min(MAX_V, velocity.x + BASE_V);
-	else if (velocity.x > 0) {
-		velocity.x = max(0, velocity.x - FRICTION);
-	} else {
-		velocity.x = min(0, velocity.x + FRICTION);
-	}
+void PlayerShip::rotate() {
+	if (rotateLeftController != NULL && rotateLeftController())
+		rotation -= ROT_D;
+	else if (rotateRightController != NULL && rotateRightController())
+		rotation += ROT_D;
 }
 
-void PlayerShip::moveY() {
+void PlayerShip::move(float dt) {
 	if (moveUpController != NULL && moveUpController())
-		velocity.y = max(-MAX_V, velocity.y - BASE_V);
+		acceleration = Vector2(sin(rotation), -cos(rotation)) * SPEED * dt;
 	else if (moveDownController != NULL && moveDownController())
-		velocity.y = min(MAX_V, velocity.y + BASE_V);
-	else if (velocity.y > 0) {
-		velocity.y = max(0, velocity.y - FRICTION);
-	} else {
-		velocity.y = min(0, velocity.y + FRICTION);
+		acceleration = Vector2(sin(rotation), -cos(rotation)) * -SPEED * dt;
+	else { // friction
+		acceleration = Vector2();
+		velocity.x = velocity.x > 0 ? max(0, velocity.x - FRICTION*dt) : min(0, velocity.x + FRICTION*dt);
+		velocity.y = velocity.y > 0 ? max(0, velocity.y - FRICTION*dt) : min(0, velocity.y + FRICTION*dt);
 	}
 }
 
-void PlayerShip::registerMoveLeft(ShipController c) { moveLeftController = c; }
-void PlayerShip::registerMoveRight(ShipController c) { moveRightController = c; }
+void PlayerShip::registerRotateLeft(ShipController c) { rotateLeftController = c; }
+void PlayerShip::registerRotateRight(ShipController c) { rotateRightController = c; }
 void PlayerShip::registerMoveUp(ShipController c) { moveUpController = c; }
 void PlayerShip::registerMoveDown(ShipController c) { moveDownController = c; }

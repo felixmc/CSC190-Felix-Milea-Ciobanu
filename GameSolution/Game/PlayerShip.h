@@ -12,25 +12,27 @@ typedef bool (*ShipController)();
 struct PlayerShip : GameObject {
 	PlayerShip(Vector2);
 
-	void registerMoveLeft(ShipController);
-	void registerMoveRight(ShipController);
+	void registerRotateLeft(ShipController);
+	void registerRotateRight(ShipController);
 	void registerMoveUp(ShipController);
 	void registerMoveDown(ShipController);
 
 	void update(float);
 
 private:
-	static const float BASE_V;
-	static const float FRICTION;
+	static const float BASE_A;
 	static const float MAX_V;
+	static const float ROT_D;
+	static const float SPEED;
+	static const float FRICTION;
 
-	ShipController moveLeftController;
-	ShipController moveRightController;
+	ShipController rotateLeftController;
+	ShipController rotateRightController;
 	ShipController moveUpController;
 	ShipController moveDownController;
 
-	void moveX();
-	void moveY();
+	void rotate();
+	void move(float);
 };
 
 #endif
