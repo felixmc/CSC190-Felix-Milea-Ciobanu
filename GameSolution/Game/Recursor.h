@@ -9,12 +9,14 @@ struct Recursor : GameObject {
 	static const float ROT_SPD;
 
 	Recursor* parent, *child;
-	int level;
+	Vector2 oldPos;
 
-	Recursor(Vector2, int, Recursor*);
+	Recursor(Vector2, int);
 
 	void update(float);
 	void draw(Core::Graphics&);
+	int getLevel();
+	Vector2 getDynamicPosition();
 };
 
 #endif

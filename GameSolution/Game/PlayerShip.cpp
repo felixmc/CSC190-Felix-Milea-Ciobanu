@@ -24,6 +24,8 @@ static Vector2 ship[] = {
 static Vector2 gunShape[] = { Vector2(0, -4), Vector2(2, 3), Vector2(-2, 3) };
 static Vector2 proShape[] = { Vector2(0, -4), Vector2(1, 2), Vector2(-1, 2) };
 
+static Shape* projShape = SHAPE(proShape);
+
 const float PlayerShip::BASE_A = 25.f;
 const float PlayerShip::MAX_V = 350.0f;
 const float PlayerShip::ROT_D = 0.04f;
@@ -65,7 +67,7 @@ void PlayerShip::update(float dt) {
 			lastFired = now;
 			color = Color::BLUE;
 
-			GameObject* p = new GameObject(gun->position,*SHAPE(proShape));
+			GameObject* p = new GameObject(gun->position,*projShape);
 			p->rotation = gun->rotation;
 			p->color = Color::RED;
 			p->velocity = Vector2(sin(gun->rotation)*PROJ_V, -cos(gun->rotation)*PROJ_V);

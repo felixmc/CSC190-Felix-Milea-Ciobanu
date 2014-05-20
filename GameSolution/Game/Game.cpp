@@ -112,7 +112,11 @@ namespace Game {
 		lerper = new LerpEnemy(*SHAPE(lerpPoints));
 		lerper->color = Color::MAGENTA;
 
-		rec = new Recursor(*center, 2, NULL);
+		rec = new Recursor(Vector2((float)SCREEN_WIDTH - 250, (float)SCREEN_HEIGHT-150.0f), 3);
+		rec->color = Color::YELLOW;
+		rec->child->color = Color::ORANGE;
+		rec->child->child->color = Color::RED;
+		rec->child->child->child->color = Color::MAGENTA;
 
 		player->registerRotateLeft([](){ return Input::IsPressed(65); });
 		player->registerRotateRight([](){ return Input::IsPressed(68); });

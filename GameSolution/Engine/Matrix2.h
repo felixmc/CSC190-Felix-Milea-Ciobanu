@@ -7,7 +7,7 @@
 namespace Engine {
 
 	struct Matrix2 {
-		const float x1, x2, y1, y2;
+		float x1, x2, y1, y2;
 
 		Matrix2() : x1(1), y1(0), x2(0), y2(1) {}
 		Matrix2(const Vector2& v1, const Vector2& v2) : x1(v1.x), y1(v1.y), x2(v2.x), y2(v2.y) {}
