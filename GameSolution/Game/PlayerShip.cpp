@@ -1,6 +1,7 @@
 #include "PlayerShip.h"
 #include "Shape.h"
 #include "Core.h"
+#include "Game.h"
 #include <cmath>
 
 // this should make the ship 59x59 pixels
@@ -21,6 +22,7 @@ static Vector2 ship[] = {
 };
 
 static Vector2 gunShape[] = { Vector2(0, -4), Vector2(2, 3), Vector2(-2, 3) };
+static Vector2 proShape[] = { Vector2(0, -4), Vector2(1, 2), Vector2(-1, 2) };
 
 const float PlayerShip::BASE_A = 25.f;
 const float PlayerShip::MAX_V = 350.0f;
@@ -28,10 +30,14 @@ const float PlayerShip::ROT_D = 0.04f;
 const float PlayerShip::SPEED = 7000.0f;
 const float PlayerShip::FRICTION = 50.0f;
 const float PlayerShip::TURRET_OFFSET = 5.0f;
+const float PlayerShip::FIRE_DELAY = 250;
+const float PlayerShip::PROJ_V = 300;
 
 PlayerShip::PlayerShip(Vector2 startPos)
 : GameObject(startPos, *SHAPE(ship)) {
 	gun = new GameObject(startPos, *SHAPE(gunShape));
+	gun->color = Color::YELLOW;
+	lastFired = 0;
 }
 
 void PlayerShip::update(float dt) {
@@ -52,13 +58,44 @@ void PlayerShip::update(float dt) {
 	gun->position = position + (Vector2(-sin(rotation), cos(rotation)) * TURRET_OFFSET);
 	Vector2 diff = (Vector2((float)mX, (float)mY) - gun->position).perpCW();
 	gun->rotation = atan2(-diff.y, -diff.x);
+
+	if (fireController != NULL && fireController()) {
+		ULONGLONG now = GetTickCount64();
+		if (now - lastFired > FIRE_DELAY) {
+			lastFired = now;
+			color = Color::BLUE;
+
+			GameObject* p = new GameObject(gun->position,*SHAPE(proShape));
+			p->rotation = gun->rotation;
+			p->color = Color::RED;
+			p->velocity = Vector2(sin(gun->rotation)*PROJ_V, -cos(gun->rotation)*PROJ_V);
+			projectiles.push_back(p);
+		} else {
+			color = Color::CYAN2;
+		}
+	} else {
+		color = Color::CYAN2;
+	}
+
+	for (unsigned int i = 0; i < projectiles.size(); i++) {
+		GameObject* p = projectiles[i];
+		p->update(dt);
+	}
+
+	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
+		[](GameObject* p) {
+			Vector2 pos = p->position;
+			return pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
+		}), projectiles.end());
 }
 
 void PlayerShip::draw(Core::Graphics& g) {
-	g.SetColor(RGB(255,255,0));
 	gun->draw(g);
-	g.SetColor(RGB(0,255,0));
 	GameObject::draw(g);
+	for (unsigned int i = 0; i < projectiles.size(); i++) {
+		GameObject* p = projectiles[i];
+		p->draw(g);
+	}
 }
 
 void PlayerShip::rotate() {
@@ -84,3 +121,4 @@ void PlayerShip::registerRotateLeft(ShipController c) { rotateLeftController = c
 void PlayerShip::registerRotateRight(ShipController c) { rotateRightController = c; }
 void PlayerShip::registerMoveUp(ShipController c) { moveUpController = c; }
 void PlayerShip::registerMoveDown(ShipController c) { moveDownController = c; }
+void PlayerShip::registerFire(ShipController c) { fireController = c; }

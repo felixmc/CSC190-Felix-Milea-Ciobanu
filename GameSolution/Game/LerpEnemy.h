@@ -1,3 +1,6 @@
+#ifndef _LERP_ENEMY_H_
+#define _LERP_ENEMY_H_
+
 #include "GameObject.h"
 #include "Shape.h"
 
@@ -16,3 +19,5 @@ private:
 	float muInc;
 	int pointIndex;
 };
+
+#endif

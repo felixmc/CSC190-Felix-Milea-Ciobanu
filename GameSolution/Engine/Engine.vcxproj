@@ -96,6 +96,7 @@
     <ClCompile Include="PositionWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Color.h" />
     <ClInclude Include="DrawValue.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="ExportHeader.h" />

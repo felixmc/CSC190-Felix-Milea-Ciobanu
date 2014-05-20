@@ -1,4 +1,4 @@
-#include "Game.h"
+﻿#include "Game.h"
 #include "PlayerShip.h"
 #include "LerpEnemy.h"
 #include "PositionWrapper.h"
@@ -6,13 +6,19 @@
 #include "PositionBoundary.h"
 #include "Shape.h"
 #include "DrawValue.h"
-//#include <vector>
+#include "Color.h"
+#include "Recursor.h"
+#include <ctime>
 
 using Core::Input;
 
 namespace Game {
 	const int SCREEN_WIDTH = 1280;
 	const int SCREEN_HEIGHT = 720;
+	const float STAR_FREQ = 0.0005f;
+	const float SHINE_FREQ = 0.01f;
+
+	bool stars[SCREEN_HEIGHT][SCREEN_WIDTH];
 
 	Vector2 boundaryPoints[] = {
 		Vector2(SCREEN_WIDTH/2.f,0),
@@ -35,35 +41,91 @@ namespace Game {
 
 	const Vector2 * center;
 	PlayerShip * player;
+	Recursor* rec;
 	LerpEnemy * lerper;
 
+	void setupStars() {
+		for (int y = 0; y < SCREEN_HEIGHT; y++) {
+			for (int x = 0; x < SCREEN_WIDTH; x++) {
+				float prob = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+				stars[y][x] = prob < STAR_FREQ;
+			}
+		}
+	}
+
+	void drawStars(Core::Graphics& g) {
+		for (int y = 0; y < SCREEN_HEIGHT; y++) {
+			for (int x = 0; x < SCREEN_WIDTH; x++) {
+				if (stars[y][x]) {
+					float prob = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+					if (prob < SHINE_FREQ/4.0f) {
+						g.SetColor(RGB(255,255,0));
+						g.DrawLine((float)x-1,(float)y-1,(float)x+2,(float)y+2);
+						g.DrawLine((float)x-1,(float)y+2,(float)x+2,(float)y-1);
+					} else {
+						prob = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+						int c = prob < SHINE_FREQ ? 220 + (rand() * 35) : 255;
+						g.SetColor(RGB(c,c,c));
+						g.DrawLine((float)x,(float)y,(float)x+1,(float)y+1);
+					}
+				}
+			}
+		}
+	}
+
 	void drawInstuctions(Core::Graphics& g) {
-		g.SetColor(RGB(255,255,255));
-		int x = 40;
-		g.DrawString(x, 20, "Press 1, 2, or 3 to change borders.");
-		g.DrawString(x, 60, "Ship position:");
-		Engine::drawValue(g, x, 80, player->position);
+		int x2 = 20;
+		int x = 150;
+		int x3 = SCREEN_WIDTH - 280;
+		g.SetTextBackgroundMode(Core::Graphics::TEXTBKGMODE::Transparent);
+		
+		g.SetColor(Color::WHITE);
+		g.DrawString(x, 20, "[ ] [ ] [ ]");
+		g.DrawString(x, 40, "[ ] [ ] [ ] [ ]");
+
+		g.SetColor(Color::CYAN);
+		g.DrawString(x, 20, " 1   2   3");
+		g.DrawString(x, 40, " w   a   s   d");
+
+		g.SetColor(Color::YELLOW);
+		g.DrawString(x2, 20, "Change borders");
+		g.DrawString(x2, 40, "Control ship");
+		g.DrawString(x2, 70, "Use cursor to aim and left click to fire.");
+
+		g.SetColor(Color::GREEN);
+		Matrix3 trans = Matrix3::translation(player->position)*Matrix3::rotation(player->rotation);
+		Engine::drawValue(g, x3, 20, trans);
 	}
 
 	void setup() {
+		srand (static_cast <unsigned> (time(0)));
+
 		center = new Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 		posManagers[0] = new PositionWrapper(SCREEN_WIDTH, SCREEN_HEIGHT);
 		posManagers[1] = new PositionBouncer(SCREEN_WIDTH, SCREEN_HEIGHT);
 		posManagers[2] = new PositionBoundary(boundary);
-		//gameObjects = new std::vector<GameObject>;
-		player = new PlayerShip(*center);
-		lerper = new LerpEnemy(*SHAPE(lerpPoints));
-		
-		//gameObjects->push_back(*player);
 
-		player->registerRotateLeft([](){ return Input::IsPressed(Input::KEY_LEFT); });
-		player->registerRotateRight([](){ return Input::IsPressed(Input::KEY_RIGHT); });
-		player->registerMoveUp([](){ return Input::IsPressed(Input::KEY_UP); });
-		player->registerMoveDown([](){ return Input::IsPressed(Input::KEY_DOWN); });
+		player = new PlayerShip(*center);
+		player->color = Color::CYAN2;
+		player->gun->color = Color::YELLOW;
+
+		lerper = new LerpEnemy(*SHAPE(lerpPoints));
+		lerper->color = Color::MAGENTA;
+
+		rec = new Recursor(*center, 2, NULL);
+
+		player->registerRotateLeft([](){ return Input::IsPressed(65); });
+		player->registerRotateRight([](){ return Input::IsPressed(68); });
+		player->registerMoveUp([](){ return Input::IsPressed(87); });
+		player->registerMoveDown([](){ return Input::IsPressed(83); });
+		player->registerFire([](){ return Input::IsPressed(Input::BUTTON_LEFT); });
+
+		setupStars();
 	}
 
 	bool update(float dt) {
 		lerper->update(dt);
+		rec->update(dt);
 		player->update(dt);
 		posManagers[posManIndex]->reposition(*player, dt);
 
@@ -82,9 +144,11 @@ namespace Game {
 	}
 
 	void draw(Core::Graphics& g) {
+		drawStars(g);
+		rec->draw(g);
+
 		player->draw(g);
 
-		g.SetColor(RGB(255,48,0));
 		lerper->draw(g);
 
 		// TODO: decouple/abstract this

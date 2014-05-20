@@ -4,12 +4,15 @@
 #include "GameObject.h"
 //#include "Vector2.h"
 
-class Scene {
-	const float width, height;
+using namespace Engine;
+
+class Scene : GameObject {
+	float width, height;
+	
+	static const float STAR_FREQ;
+
 public:
-	Scene(float width, float height) : width(width), height(height) {
-		
-	}
+	Scene(float,float);
 };
 
 
