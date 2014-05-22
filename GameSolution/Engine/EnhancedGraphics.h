@@ -45,15 +45,19 @@ namespace Engine {
 
 		void operator=(EnhancedGraphics e) { e; }
 
-		void inline change() {
+		inline void change() {
 			if (!hasChanged) {
 				clearBuffer();
 				hasChanged = true;
 			}
 		}
 
-		void inline resetChanges() {
+		inline void resetChanges() {
 			hasChanged = false;
+		}
+
+		inline bool isOnScreen(Vector2 p) {
+			return p.x >= 0 && p.x < WIDTH && p.y >= 0 && p.y < HEIGHT;
 		}
 
 	public:
@@ -63,11 +67,6 @@ namespace Engine {
 		}
 
 		void draw(Graphics& g) {
-			if (!hasChanged)
-				return;
-
-			resetChanges();
-
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int x = 0; x < WIDTH; x++) {
 
@@ -81,10 +80,11 @@ namespace Engine {
 			}
 
 			g.SetColor(RGB(255,255,255));
+			resetChanges();
 		}
 
 		inline void drawPoint(Vector2 p) {
-			if (bitmapBuffer[coord(p)] != curColor) {
+			if (isOnScreen(p) && bitmapBuffer[coord(p)] != curColor) {
 				bitmapBuffer[coord(p)] = curColor;
 				change();
 			}

@@ -59,17 +59,17 @@ void Recursor::update(float dt) {
 	GameObject::update(dt);	
 }
 
-void Recursor::draw(Core::Graphics& g) {
+void Recursor::draw(EnhancedGraphics& g) {
 	
 	if (parent == NULL)
 		GameObject::draw(g);
 	else {
 		Matrix3 trans = Matrix3::translation(position)*Matrix3::rotation(rotation)*Matrix3::scale(scale);
-		g.SetColor(color);
+		g.setColor(color);
 		for (int i = 0; i < shape.size; i++) {
 			Vector3 p1 = trans * Vector3(shape.points[i]);
 			Vector3 p2 = trans * Vector3(shape.points[(i + 1) % shape.size]);
-			g.DrawLine(p1.x, p1.y, p2.x, p2.y);
+			g.drawLine(p1, p2);
 		}
 	}
 

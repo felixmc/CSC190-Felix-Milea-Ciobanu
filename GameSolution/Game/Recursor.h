@@ -14,7 +14,7 @@ struct Recursor : GameObject {
 	Recursor(Vector2, int);
 
 	void update(float);
-	void draw(Core::Graphics&);
+	void draw(EnhancedGraphics&);
 	int getLevel();
 	Vector2 getDynamicPosition();
 };

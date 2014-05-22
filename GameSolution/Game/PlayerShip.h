@@ -22,7 +22,7 @@ struct PlayerShip : GameObject {
 	void registerFire(ShipController);
 
 	void update(float);
-	void draw(Core::Graphics&);
+	void draw(EnhancedGraphics&);
 
 private:
 	static const float BASE_A;

@@ -36,6 +36,8 @@ namespace Game {
 
 	Shape& boundary = *SHAPE(boundaryPoints);
 
+	EnhancedGraphics* eg;
+
 	//std::vector<GameObject>* gameObjects;
 	PositionManager* posManagers[3];
 	int posManIndex = 0;
@@ -45,7 +47,7 @@ namespace Game {
 	Recursor* rec;
 	LerpEnemy * lerper;
 
-	void drawCircle(Core::Graphics& g) {
+	void drawCircle(EnhancedGraphics& g) {
 		const int sides = 10;
 		const int size = 5;
 
@@ -79,20 +81,20 @@ namespace Game {
 		}
 	}
 
-	void drawStars(Core::Graphics& g) {
+	void drawStars(EnhancedGraphics& g) {
 		for (int y = 0; y < SCREEN_HEIGHT; y++) {
 			for (int x = 0; x < SCREEN_WIDTH; x++) {
 				if (stars[y][x]) {
 					float prob = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 					if (prob < SHINE_FREQ/4.0f) {
-						g.SetColor(RGB(255,255,0));
-						g.DrawLine((float)x-1,(float)y-1,(float)x+2,(float)y+2);
-						g.DrawLine((float)x-1,(float)y+2,(float)x+2,(float)y-1);
+						g.setColor(RGB(255,255,0));
+						g.drawLine(Vector2((float)x-1,(float)y-1),Vector2((float)x+2,(float)y+2));
+						g.drawLine(Vector2((float)x-1,(float)y+2),Vector2((float)x+2,(float)y-1));
 					} else {
 						prob = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 						int c = prob < SHINE_FREQ ? 220 + (rand() * 35) : 255;
-						g.SetColor(RGB(c,c,c));
-						g.DrawLine((float)x,(float)y,(float)x+1,(float)y+1);
+						g.setColor(RGB(c,c,c));
+						g.drawLine(Vector2((float)x,(float)y),Vector2((float)x+1,(float)y+1));
 					}
 				}
 			}
@@ -125,6 +127,8 @@ namespace Game {
 
 	void setup() {
 		srand (static_cast <unsigned> (time(0)));
+
+		eg = new EnhancedGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		center = new Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 		posManagers[0] = new PositionWrapper(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -174,12 +178,12 @@ namespace Game {
 	}
 
 	void draw(Core::Graphics& g) {
-		drawStars(g);
-		rec->draw(g);
-		drawCircle(g);
+		drawStars(*eg);
+		rec->draw(*eg);
+		drawCircle(*eg);
 
-		player->draw(g);
-		lerper->draw(g);
+		player->draw(*eg);
+		lerper->draw(*eg);
 
 		// TODO: decouple/abstract this
 		if(posManIndex == 2) { // position manager set to border
@@ -192,6 +196,10 @@ namespace Game {
 		}
 
 		drawInstuctions(g);
+
+		eg->draw(g);
+
+		g;
 	}
 
 }

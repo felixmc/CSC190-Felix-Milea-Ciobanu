@@ -91,7 +91,7 @@ void PlayerShip::update(float dt) {
 		}), projectiles.end());
 }
 
-void PlayerShip::draw(Core::Graphics& g) {
+void PlayerShip::draw(EnhancedGraphics& g) {
 	gun->draw(g);
 	GameObject::draw(g);
 	for (unsigned int i = 0; i < projectiles.size(); i++) {
