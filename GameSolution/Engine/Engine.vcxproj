@@ -97,8 +97,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.h" />
+    <ClInclude Include="IDrawable.h" />
     <ClInclude Include="DrawValue.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="EnhancedGraphics.h" />
     <ClInclude Include="ExportHeader.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Matrix2.h" />

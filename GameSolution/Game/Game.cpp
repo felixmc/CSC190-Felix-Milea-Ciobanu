@@ -9,6 +9,7 @@
 #include "Color.h"
 #include "Recursor.h"
 #include <ctime>
+#include <cmath>
 
 using Core::Input;
 
@@ -43,6 +44,31 @@ namespace Game {
 	PlayerShip * player;
 	Recursor* rec;
 	LerpEnemy * lerper;
+
+	void drawCircle(Core::Graphics& g) {
+		const int sides = 10;
+		const int size = 5;
+
+		GameObject* circles[size];
+
+		for (int s = size; s > 0; s--) {
+			Vector2 shape[sides];
+		
+			for (int i = 0; i < sides; i++) {
+				float angle = (3.14f * 2 / sides) * i;
+				shape[i] = Vector2(cos(angle)*s, sin(angle)*s);
+			}
+			
+			circles[size - s] = new GameObject(Vector2(100,150), *SHAPE(shape));
+			float color = ((255.0f/size) * s);
+			circles[size - s]->color = RGB(0, 255-color, 0);
+			circles[size - s]->draw(g);
+			//drawValue(g,20,20*s,s - size);
+			circles;
+			g;
+		}
+
+	}
 
 	void setupStars() {
 		for (int y = 0; y < SCREEN_HEIGHT; y++) {
@@ -150,9 +176,9 @@ namespace Game {
 	void draw(Core::Graphics& g) {
 		drawStars(g);
 		rec->draw(g);
+		drawCircle(g);
 
 		player->draw(g);
-
 		lerper->draw(g);
 
 		// TODO: decouple/abstract this
