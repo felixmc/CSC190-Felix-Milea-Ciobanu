@@ -3,7 +3,10 @@
 
 #include "Core.h"
 #include "Vector2.h"
+#include "Color.h"
+//#include "DrawValue.h"
 #include <cmath>
+#include <string>
 
 using Core::Graphics;
 
@@ -67,6 +70,8 @@ namespace Engine {
 		}
 
 		void draw(Graphics& g) {
+			int count = 0;
+
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int x = 0; x < WIDTH; x++) {
 
@@ -75,17 +80,33 @@ namespace Engine {
 					if (color != 0) {
 						g.SetColor(bitmapBuffer[coord(x,y)]);
 						plot(g, Vector2((float)x, (float)y));
+						count++;
 					}
 				}
 			}
 
 			g.SetColor(RGB(255,255,255));
+	
+			g.DrawString(20,HEIGHT - 20,std::to_string(count).c_str());
+			g.DrawString(60,HEIGHT - 20,"px drawn");
+
 			resetChanges();
 		}
 
 		inline void drawPoint(Vector2 p) {
-			if (isOnScreen(p) && bitmapBuffer[coord(p)] != curColor) {
-				bitmapBuffer[coord(p)] = curColor;
+			if (isOnScreen(p)) {
+				//bitmapBuffer[coord(p)] != curColor
+
+				float a = (255 - GetAValue(curColor)) / 255.0f;
+				float na = 1 - a;
+				int c = bitmapBuffer[coord(p)];
+
+				bitmapBuffer[coord(p)] = RGB(
+					min((GetRValue(c) * na) + (GetRValue(curColor) * a),255),
+					min((GetGValue(c) * na) + (GetGValue(curColor) * a),255),
+					min((GetBValue(c) * na) + (GetBValue(curColor) * a),255)
+				);
+
 				change();
 			}
 		}

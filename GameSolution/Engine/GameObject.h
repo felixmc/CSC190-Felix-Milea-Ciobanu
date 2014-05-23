@@ -6,7 +6,6 @@
 #include "Shape.h"
 #include "Matrix3.h"
 #include "Vector3.h"
-#include "Color.h"
 
 namespace Engine {
 
@@ -34,7 +33,7 @@ namespace Engine {
 			for (int i = 0; i < shape.size; i++) {
 				Vector3 p1 = trans * Vector3(shape.points[i]);
 				Vector3 p2 = trans * Vector3(shape.points[(i + 1) % shape.size]);
-				g.drawLine(p1, p2);
+				g.drawLine(p1,p2);
 			}
 		}
 

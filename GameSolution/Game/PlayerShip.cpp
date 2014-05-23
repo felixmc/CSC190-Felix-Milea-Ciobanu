@@ -28,7 +28,7 @@ static Shape* projShape = SHAPE(proShape);
 
 const float PlayerShip::BASE_A = 25.f;
 const float PlayerShip::MAX_V = 350.0f;
-const float PlayerShip::ROT_D = 0.04f;
+const float PlayerShip::ROT_D = 0.07f;
 const float PlayerShip::SPEED = 7000.0f;
 const float PlayerShip::FRICTION = 50.0f;
 const float PlayerShip::TURRET_OFFSET = 5.0f;

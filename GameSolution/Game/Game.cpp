@@ -6,8 +6,8 @@
 #include "PositionBoundary.h"
 #include "Shape.h"
 #include "DrawValue.h"
-#include "Color.h"
 #include "Recursor.h"
+#include "ParticleSystem.h"
 #include <ctime>
 #include <cmath>
 
@@ -46,29 +46,45 @@ namespace Game {
 	PlayerShip * player;
 	Recursor* rec;
 	LerpEnemy * lerper;
+	ParticleSystem * ps;
 
-	void drawCircle(EnhancedGraphics& g) {
-		const int sides = 10;
-		const int size = 5;
+	void drawCircle(EnhancedGraphics& g, Vector2 center) {
+		g;
 
-		GameObject* circles[size];
+		const int radius = 13;
+		//const Vector2 center(300,300);
+		const float PI = 3.14159265358979323846f;
 
-		for (int s = size; s > 0; s--) {
-			Vector2 shape[sides];
-		
-			for (int i = 0; i < sides; i++) {
-				float angle = (3.14f * 2 / sides) * i;
-				shape[i] = Vector2(cos(angle)*s, sin(angle)*s);
+		for (int i = 0; i < radius; i++) {
+			int a = 230;//min(100+(int)(((float)i/radius)*255),255);
+			g.setColor(RGBA(0,255-min(0+(int)(((float)i/radius)*255),255),255,a));
+			float ps = 2 * PI * radius;
+			for (int j = 0; j < ps; j++) {
+				Vector2 p = Matrix3::rotation(j/ps*2*PI) * Vector2(0,(float)i);
+				g.drawPoint(center+p);
 			}
-			
-			circles[size - s] = new GameObject(Vector2(100,150), *SHAPE(shape));
-			float color = ((255.0f/size) * s);
-			circles[size - s]->color = RGB(0, 255-color, 0);
-			circles[size - s]->draw(g);
-			//drawValue(g,20,20*s,s - size);
-			circles;
-			g;
 		}
+
+
+		//const int sides = 10;
+		//const int size = 5;
+
+		//for (int s = size; s > 0; s--) {
+		//	Vector2 shape[sides];
+		//
+		//	for (int i = 0; i < sides; i++) {
+		//		float angle = (3.14f * 2 / sides) * i;
+		//		shape[i] = Vector2(cos(angle)*s, sin(angle)*s);
+		//	}
+		//	
+		//	circles[size - s] = new GameObject(Vector2(100,150), *SHAPE(shape));
+		//	float color = ((255.0f/size) * s);
+		//	circles[size - s]->color = RGBA(255,0,0,color);
+		//	circles[size - s]->draw(g);
+		//	//drawValue(g,20,20*s,s - size);
+		//	circles;
+		//	g;
+		//}
 
 	}
 
@@ -126,7 +142,21 @@ namespace Game {
 	}
 
 	void setup() {
+		srand((int)time(0));
 		srand (static_cast <unsigned> (time(0)));
+
+		ps = new ParticleSystem(40);
+		ps->position = Vector2(200,200);
+		ps->minPositionOffset = Vector2(-5,-5);
+		ps->maxPositionOffset = Vector2(5,5);
+		ps->minVelocity = Vector2(-3,-3);
+		ps->maxVelocity = Vector2(3,3);
+		ps->minLifeTime = 1;
+		ps->maxLifeTime  = 2;
+		ps->minRadius = 8;
+		ps->maxRadius = 15;
+		ps->startColor = RGBA(0,255,255,230);
+		ps->endColor = RGBA(0,0,255,230);
 
 		eg = new EnhancedGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -136,7 +166,7 @@ namespace Game {
 		posManagers[2] = new PositionBoundary(boundary);
 
 		player = new PlayerShip(*center);
-		player->color = Color::CYAN2;
+		player->color = RGBA(0,200,220,220);
 		player->gun->color = Color::YELLOW;
 
 		lerper = new LerpEnemy(*SHAPE(lerpPoints));
@@ -163,6 +193,8 @@ namespace Game {
 		player->update(dt);
 		posManagers[posManIndex]->reposition(*player, dt);
 
+		ps->update(dt);
+
 		int oldPos = posManIndex;
 
 		// TODO: decouple/abstract this
@@ -180,10 +212,25 @@ namespace Game {
 	void draw(Core::Graphics& g) {
 		drawStars(*eg);
 		rec->draw(*eg);
-		drawCircle(*eg);
+
+		//for(int i = 0; i < 30; i++) {
+		//	drawCircle(*eg, Vector2(300.0f+(rand()%35),300.0f+(rand()%35)));
+		//}
+
+		ps->draw(*eg);
 
 		player->draw(*eg);
 		lerper->draw(*eg);
+
+		for (int i = 0; i < 40; i++) {
+			eg->setColor(RGBA(255,255,0,255-i*(255/40)));
+			eg->drawLine(Vector2(615.0f+i, 350),Vector2(615.0f+i,400));
+		}
+
+		for (int i = 0; i < 40; i++) {
+			eg->setColor(RGBA(255,0,0,(i + 1)*(255/40)));
+			eg->drawLine(Vector2(635.0f+i, 370),Vector2(635.0f+i,420));
+		}
 
 		// TODO: decouple/abstract this
 		if(posManIndex == 2) { // position manager set to border

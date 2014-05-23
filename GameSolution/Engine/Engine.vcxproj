@@ -105,6 +105,8 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Matrix2.h" />
     <ClInclude Include="Matrix3.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PositionBouncer.h" />
     <ClInclude Include="PositionBoundary.h" />
     <ClInclude Include="PositionManager.h" />
