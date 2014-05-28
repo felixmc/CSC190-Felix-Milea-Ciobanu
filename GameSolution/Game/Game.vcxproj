@@ -54,6 +54,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\Engine;$(SolutionDir)\Core\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -87,20 +88,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Game2.cpp" />
     <ClCompile Include="LerpEnemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerShip.cpp" />
     <ClCompile Include="Recursor.cpp" />
-    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="StarScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game2.h" />
     <ClInclude Include="LerpEnemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="PlayerShip.h" />
     <ClInclude Include="Recursor.h" />
-    <ClInclude Include="Scene.h" />
+    <ClInclude Include="StarScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

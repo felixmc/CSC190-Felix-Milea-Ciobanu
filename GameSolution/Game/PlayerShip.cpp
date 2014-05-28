@@ -28,22 +28,46 @@ static Shape* projShape = SHAPE(proShape);
 
 const float PlayerShip::BASE_A = 25.f;
 const float PlayerShip::MAX_V = 350.0f;
-const float PlayerShip::ROT_D = 0.07f;
+const float PlayerShip::ROT_D = 1.2f;
 const float PlayerShip::SPEED = 7000.0f;
 const float PlayerShip::FRICTION = 50.0f;
 const float PlayerShip::TURRET_OFFSET = 5.0f;
 const float PlayerShip::FIRE_DELAY = 250;
 const float PlayerShip::PROJ_V = 300;
+const float PlayerShip::PROJ_R = 30;
 
 PlayerShip::PlayerShip(Vector2 startPos)
 : GameObject(startPos, *SHAPE(ship)) {
 	gun = new GameObject(startPos, *SHAPE(gunShape));
 	gun->color = Color::YELLOW;
 	lastFired = 0;
+
+	leftPs = new ParticleSystem(50);
+	leftPs->minVelocity = Vector2(-2,0);
+	leftPs->minLifeTime = .1f;
+	leftPs->maxLifeTime  = .25f;
+	leftPs->minRadius = 4;
+	leftPs->maxRadius = 6;
+	leftPs->startColor = RGBA(255,230,0,200);
+	leftPs->endColor = RGBA(255,0,0,255);
+	leftPs->sizeDelta = -.000003f;
+
+	rightPs = new ParticleSystem(leftPs->size);
+	rightPs->minVelocity = leftPs->minVelocity;
+	rightPs->minLifeTime = leftPs->minLifeTime;
+	rightPs->maxLifeTime  = leftPs->maxLifeTime;
+	rightPs->minRadius = leftPs->minRadius;
+	rightPs->maxRadius = leftPs->maxRadius;
+	rightPs->startColor = leftPs->startColor;
+	rightPs->endColor = leftPs->endColor;
+	rightPs->sizeDelta = leftPs->sizeDelta;
+
+	Game::particleManager->add(leftPs);
+	Game::particleManager->add(rightPs);
 }
 
 void PlayerShip::update(float dt) {
-	rotate();
+	rotate(dt);
 	move(dt);
 	
 	velocity += acceleration * dt;
@@ -65,18 +89,13 @@ void PlayerShip::update(float dt) {
 		ULONGLONG now = GetTickCount64();
 		if (now - lastFired > FIRE_DELAY) {
 			lastFired = now;
-			color = Color::BLUE;
 
 			GameObject* p = new GameObject(gun->position,*projShape);
 			p->rotation = gun->rotation;
 			p->color = Color::RED;
 			p->velocity = Vector2(sin(gun->rotation)*PROJ_V, -cos(gun->rotation)*PROJ_V);
 			projectiles.push_back(p);
-		} else {
-			color = Color::CYAN2;
 		}
-	} else {
-		color = Color::CYAN2;
 	}
 
 	for (unsigned int i = 0; i < projectiles.size(); i++) {
@@ -85,10 +104,57 @@ void PlayerShip::update(float dt) {
 	}
 
 	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
-		[](GameObject* p) {
+		[&](GameObject* p) {
 			Vector2 pos = p->position;
-			return pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
+			bool isDead = pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
+
+			if (isDead) {
+				delete p;
+				return true;
+			}
+
+			if (target != NULL && target->position.distance(p->position) <= PROJ_R) {
+				ExplosionParticleSystem * ps = new ExplosionParticleSystem(100);
+				ps->position = p->position;
+				ps->minVelocity = Vector2(-140,-140);
+				ps->maxVelocity = Vector2(140,140);
+				ps->minLifeTime = .1f;
+				ps->maxLifeTime  = 1.0f;
+				ps->minRadius = 2;
+				ps->maxRadius = 4;
+				ps->startColor = RGBA(255,0,0,200);
+				ps->endColor = RGBA(255,0,128,255);
+
+				Game::particleManager->add(ps);
+
+				delete p;
+				return true;
+			}
+
+			return false;
 		}), projectiles.end());
+
+	leftPs->position = Matrix3::translation(position)*Matrix3::rotation(rotation)*Vector2(-24,22);
+	rightPs->position =  Matrix3::translation(position)*Matrix3::rotation(rotation)*Vector2(24,22);
+
+	float tailSpeed = 10 + ((abs(velocity.x) + abs(velocity.y))/(MAX_V*2)) * 40;
+
+	leftPs->minVelocity = Matrix3::rotation(rotation)*(Vector2(-2,0));
+	rightPs->minVelocity = leftPs->minVelocity;
+
+	leftPs->maxVelocity = velocity + Matrix3::rotation(rotation)*(Vector2(2,tailSpeed));
+	rightPs->maxVelocity = leftPs->maxVelocity;
+
+	leftPs->minPositionOffset = Matrix3::rotation(rotation)*Vector2(-2,0);
+	rightPs->minPositionOffset = leftPs->minPositionOffset;
+	leftPs->maxPositionOffset = Matrix3::rotation(rotation)*Vector2(2,4);
+	rightPs->maxPositionOffset = leftPs->maxPositionOffset;
+
+	unsigned int parts = 20+(int)(((abs(velocity.x) + abs(velocity.y))/(MAX_V*2) + (abs(acceleration.x) + abs(acceleration.y))/1000) * 70);
+
+	leftPs->size = parts;
+	rightPs->size = leftPs->size;
+
 }
 
 void PlayerShip::draw(EnhancedGraphics& g) {
@@ -100,14 +166,14 @@ void PlayerShip::draw(EnhancedGraphics& g) {
 	}
 }
 
-void PlayerShip::rotate() {
+inline void PlayerShip::rotate(float dt) {
 	if (rotateLeftController != NULL && rotateLeftController())
-		rotation -= ROT_D;
+		rotation -= ROT_D * dt;
 	else if (rotateRightController != NULL && rotateRightController())
-		rotation += ROT_D;
+		rotation += ROT_D * dt;
 }
 
-void PlayerShip::move(float dt) {
+inline void PlayerShip::move(float dt) {
 	if (moveUpController != NULL && moveUpController())
 		acceleration = Vector2(sin(rotation), -cos(rotation)) * SPEED * dt;
 	else if (moveDownController != NULL && moveDownController())
@@ -119,6 +185,7 @@ void PlayerShip::move(float dt) {
 	}
 }
 
+void PlayerShip::registerTarget(GameObject* t) { target = t; };
 void PlayerShip::registerRotateLeft(ShipController c) { rotateLeftController = c; }
 void PlayerShip::registerRotateRight(ShipController c) { rotateRightController = c; }
 void PlayerShip::registerMoveUp(ShipController c) { moveUpController = c; }

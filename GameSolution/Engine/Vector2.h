@@ -25,8 +25,15 @@ namespace Engine {
 			return (v1.x * v2.y) - (v1.y * v2.x);
 		}
 
+		inline static float distance(const Vector2& v1, const Vector2& v2) {
+			return sqrt(pow((v1.x - v2.x),2) + pow((v1.y - v2.y),2));
+		}
 
 		// instance functions
+		inline float distance(const Vector2& v2) const {
+			return Vector2::distance(*this, v2); 
+		}
+
 		inline float dot(const Vector2& v2) const {
 			return Vector2::dot(*this, v2);
 		}

@@ -2,6 +2,7 @@
 #define _PLAYERSHIP_H_
 
 #include "GameObject.h"
+#include "ExplosionParticleSystem.h"
 #include "Vector2.h"
 #include <vector>
 
@@ -11,10 +12,12 @@ typedef bool (*ShipController)();
 
 /* A bit more code, but decoupled ship control from keyboard */
 struct PlayerShip : GameObject {
+	GameObject* gun, *target;
+	ParticleSystem * leftPs, * rightPs;
+
 	PlayerShip(Vector2);
 
-	GameObject* gun;
-
+	void registerTarget(GameObject*);
 	void registerRotateLeft(ShipController);
 	void registerRotateRight(ShipController);
 	void registerMoveUp(ShipController);
@@ -33,6 +36,7 @@ private:
 	static const float TURRET_OFFSET;
 	static const float FIRE_DELAY;
 	static const float PROJ_V;
+	static const float PROJ_R;
 
 	std::vector<GameObject*> projectiles;
 	ULONGLONG lastFired;
@@ -43,7 +47,7 @@ private:
 	ShipController moveDownController;
 	ShipController fireController;
 
-	void rotate();
+	void rotate(float);
 	void move(float);
 };
 

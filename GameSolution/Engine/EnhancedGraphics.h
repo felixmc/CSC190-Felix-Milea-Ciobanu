@@ -4,7 +4,6 @@
 #include "Core.h"
 #include "Vector2.h"
 #include "Color.h"
-//#include "DrawValue.h"
 #include <cmath>
 #include <string>
 
@@ -17,14 +16,15 @@ namespace Engine {
 		int* bitmapBuffer;
 		int curColor;
 		bool hasChanged;
+		ULONGLONG lastDrawn;
 
-		void swap(float& f1, float& f2) {
+		inline void swap(float& f1, float& f2) {
 			float temp = f1;
 			f1 = f2;
 			f2 = temp;
 		}
 
-		void swap(int& f1, int& f2) {
+		inline void swap(int& f1, int& f2) {
 			int temp = f1;
 			f1 = f2;
 			f2 = temp;
@@ -34,16 +34,8 @@ namespace Engine {
 			std::fill(bitmapBuffer, bitmapBuffer + WIDTH*HEIGHT, 0);
 		}
 
-		inline void plot(Graphics& g, Vector2 p) {
+		inline void plot(Graphics& g, const Vector2& p) {
 			g.DrawLine(p.x, p.y, p.x+1, p.y+1);
-		}
-
-		inline int coord(int x, int y) {
-			return (y * WIDTH) + x;
-		}
-
-		inline int coord(Vector2 v) {
-			return coord((int)v.x,(int)v.y);
 		}
 
 		void operator=(EnhancedGraphics e) { e; }
@@ -59,7 +51,7 @@ namespace Engine {
 			hasChanged = false;
 		}
 
-		inline bool isOnScreen(Vector2 p) {
+		inline bool isOnScreen(const Vector2& p) {
 			return p.x >= 0 && p.x < WIDTH && p.y >= 0 && p.y < HEIGHT;
 		}
 
@@ -67,6 +59,7 @@ namespace Engine {
 		EnhancedGraphics(int w, int h) : WIDTH(w), HEIGHT(h) {
 			bitmapBuffer = new int[WIDTH * HEIGHT];
 			curColor = RGB(255,255,255);
+			lastDrawn = 0;
 		}
 
 		void draw(Graphics& g) {
@@ -74,11 +67,10 @@ namespace Engine {
 
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int x = 0; x < WIDTH; x++) {
-
-					g;
-					int color = bitmapBuffer[coord(x,y)];
+					int color = bitmapBuffer[(y * WIDTH) + x];
+					color;
 					if (color != 0) {
-						g.SetColor(bitmapBuffer[coord(x,y)]);
+						g.SetColor(color);
 						plot(g, Vector2((float)x, (float)y));
 						count++;
 					}
@@ -86,36 +78,52 @@ namespace Engine {
 			}
 
 			g.SetColor(RGB(255,255,255));
-	
+
 			g.DrawString(20,HEIGHT - 20,std::to_string(count).c_str());
-			g.DrawString(60,HEIGHT - 20,"px drawn");
+			g.DrawString(60,HEIGHT - 20,"px/frame");
+
+			ULONGLONG now = GetTickCount64();
+			int frames = (int)(1000.0f / (now - lastDrawn));
+
+			g.DrawString(20,HEIGHT - 40,std::to_string(frames).c_str());
+			g.DrawString(60,HEIGHT - 40,"fps");
 
 			resetChanges();
+			lastDrawn = now;
 		}
 
-		inline void drawPoint(Vector2 p) {
+		void drawBitmap(const Vector2& start, int width, int height, int* data) {
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					setColor(data[(y * width) + x]);
+					drawPoint(start + Vector2((float)x,(float)y));
+				}
+			}
+		}
+
+		inline void drawPoint(const Vector2& p) {
 			if (isOnScreen(p)) {
-				//bitmapBuffer[coord(p)] != curColor
+				int coor = ((int)p.y * WIDTH) + (int)p.x;
+				int c = bitmapBuffer[coor];
 
 				float a = (255 - GetAValue(curColor)) / 255.0f;
 				float na = 1 - a;
-				int c = bitmapBuffer[coord(p)];
 
-				bitmapBuffer[coord(p)] = RGB(
+				bitmapBuffer[coor] = RGB(
 					min((GetRValue(c) * na) + (GetRValue(curColor) * a),255),
 					min((GetGValue(c) * na) + (GetGValue(curColor) * a),255),
 					min((GetBValue(c) * na) + (GetBValue(curColor) * a),255)
-				);
+					);
 
 				change();
 			}
 		}
 
-		inline void setColor(int c) {
+		inline void setColor(const int& c) {
 			curColor = c;
 		}
 
-		void drawLine(Vector2 p1, Vector2 p2) {
+		void drawLine(const Vector2& p1, const Vector2& p2) {
 			int x0 = (int)p1.x;
 			int x1 = (int)p2.x;
 			int y0 = (int)p1.y;

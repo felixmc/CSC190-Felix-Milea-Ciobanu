@@ -22,12 +22,12 @@ namespace Engine {
 			color = Color::WHITE;
 		}
 		
-		void update(float dt) {
+		inline void update(float dt) {
 			velocity += acceleration * dt;
 			position += velocity * dt;
 		}
 
-		virtual void draw(EnhancedGraphics& g)  {
+		inline virtual void draw(EnhancedGraphics& g)  {
 			Matrix3 trans = Matrix3::translation(position)*Matrix3::rotation(rotation)*Matrix3::scale(scale);
 			g.setColor(color);
 			for (int i = 0; i < shape.size; i++) {

@@ -23,13 +23,10 @@
     <ClCompile Include="LerpEnemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Recursor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game2.cpp">
+    <ClCompile Include="StarScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -43,13 +40,10 @@
     <ClInclude Include="LerpEnemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Recursor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game2.h">
+    <ClInclude Include="StarScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

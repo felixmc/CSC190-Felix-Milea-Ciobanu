@@ -12,19 +12,19 @@ namespace Engine {
 		Matrix2() : x1(1), y1(0), x2(0), y2(1) {}
 		Matrix2(const Vector2& v1, const Vector2& v2) : x1(v1.x), y1(v1.y), x2(v2.x), y2(v2.y) {}
 
-		static Matrix2 rotation(float a) {
+		inline static Matrix2 rotation(float a) {
 			return Matrix2(Vector2(cos(a), sin(a)), Vector2(-sin(a), cos(a)));
 		}
 
-		static Matrix2 scale(float s) {
+		inline static Matrix2 scale(float s) {
 			return Matrix2(Vector2(s, 0), Vector2(0, s));
 		}
 		
-		static Matrix2 scaleX(float s) {
+		inline static Matrix2 scaleX(float s) {
 			return Matrix2(Vector2(s, 0), Vector2(0, 1));		
 		}
 		
-		static Matrix2 scaleY(float s) {
+		inline static Matrix2 scaleY(float s) {
 			return Matrix2(Vector2(1, 0), Vector2(0, s));		
 		}
 

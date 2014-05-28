@@ -3,6 +3,7 @@
 
 #include "EnhancedGraphics.h"
 #include "Matrix3.h"
+#include "EngineMath.h"
 
 namespace Engine {
 
@@ -14,26 +15,24 @@ namespace Engine {
 		float lifeTime;
 		const float maxLifeTime;
 
-		const float PI;
+		Particle(float l) : maxLifeTime(l), lifeTime(0) {}
 
-		Particle(float l) : maxLifeTime(l), lifeTime(0), PI(3.14159265358979323846f) {}
-
-		bool isDead() {
-			return lifeTime >= maxLifeTime;
+		inline bool isDead() {
+			return lifeTime >= maxLifeTime || radius <= 0;
 		}
 
-		void update(float dt) {
+		inline void update(float dt) {
 			lifeTime += dt;
-			position += velocity;
+			position += velocity * dt;
 		}
 
-		void draw(EnhancedGraphics& g) {
+		inline void draw(EnhancedGraphics& g) {
 
 			for (int i = 0; i < radius; i++) {
 				g.setColor(Color::interpolate(startColor, endColor, (float)i / radius));
-				float ps = 2 * PI * radius;
+				float ps = 2 * Math::PI * radius;
 				for (int j = 0; j < ps; j++) {
-					Vector2 p = Matrix3::rotation(j/ps*2*PI) * Vector2(0,(float)i);
+					Vector2 p = Matrix3::rotation(j/ps*2*Engine::Math::PI) * Vector2(0,(float)i);
 					g.drawPoint(position+p);
 				}
 			}
