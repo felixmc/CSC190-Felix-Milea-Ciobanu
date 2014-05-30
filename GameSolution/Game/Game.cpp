@@ -6,8 +6,10 @@
 #include "PositionBoundary.h"
 #include "Shape.h"
 #include "DrawValue.h"
+#include "SceneManager.h"
 #include "Recursor.h"
 #include "StarScene.h"
+#include "InverseFilter.h"
 #include <ctime>
 #include <cmath>
 
@@ -38,13 +40,12 @@ namespace Game {
 	//std::vector<GameObject>* gameObjects;
 	PositionManager* posManagers[3];
 	int posManIndex = 0;
-	bool showStars = false;
 
 	const Vector2 * center;
 	PlayerShip * player;
 	Recursor* rec;
 	LerpEnemy * lerper;
-	StarScene * stars1, *stars2;
+	SceneManager * sceneManager;
 
 	//const int sides = 10;
 	//const int size = 5;
@@ -75,21 +76,21 @@ namespace Game {
 		g.SetColor(Color::WHITE);
 		g.DrawString(x, 20, "[ ] [ ] [ ]");
 		g.DrawString(x, 40, "[ ] [ ] [ ] [ ]");
-		g.DrawString(x, 60, "[ ]");
+		//g.DrawString(x, 60, "[ ]");
 
 		g.SetColor(Color::CYAN);
 		g.DrawString(x, 20, " 1   2   3");
 		g.DrawString(x, 40, " w   a   s   d");
-		g.DrawString(x, 60, " 4");
+		//g.DrawString(x, 60, " 4");
 
 		g.SetColor(Color::YELLOW);
 		g.DrawString(x2, 20, "Change borders");
 		g.DrawString(x2, 40, "Control ship");
-		g.DrawString(x2, 60, "Toggle stars");
+		//g.DrawString(x2, 60, "Toggle stars");
 		g.DrawString(x2, 120, "Use cursor to aim and left click to fire.");
 
-		g.SetColor(RGB(128,128,128));
-		g.DrawString(x2, 90, "[stars are experimental and may cause lag]");
+		//g.SetColor(RGB(128,128,128));
+		//g.DrawString(x2, 90, "[stars are experimental and may cause lag]");
 
 		g.SetColor(RGB(255,128,0));
 		g.DrawString(x2, 140, "Fire at lerper for explosions.");
@@ -119,13 +120,16 @@ namespace Game {
 		player->gun->color = Color::YELLOW;
 		player->registerTarget(lerper);
 
-		StarScene::init();
+		Scene::init();
 
-		stars1 = new StarScene(SCREEN_WIDTH, SCREEN_HEIGHT);
-		stars1->velocity = Vector2(12,15);
+		sceneManager = new SceneManager();
+		Scene *scene1 = new Scene((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
+		scene1->velocity = Vector2(15,10);
+		sceneManager->add(scene1);
 
-		stars2 = new StarScene(SCREEN_WIDTH, SCREEN_HEIGHT);
-		stars2->velocity = Vector2(-10,5);
+		Scene *scene2 = new Scene((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
+		scene2->velocity = Vector2(-5,-15);
+		sceneManager->add(scene2);
 
 		rec = new Recursor(Vector2((float)SCREEN_WIDTH - 250, (float)SCREEN_HEIGHT-150.0f), 3);
 		rec->color = Color::YELLOW;
@@ -141,11 +145,7 @@ namespace Game {
 	}
 
 	bool update(float dt) {
-		stars1->update(dt);
-		stars2->update(dt);
-
-		stars1->velocity = Vector2(5,15) + (player->velocity * dt);
-		stars2->velocity = Vector2(-10,5) + (player->velocity * dt);
+		sceneManager->update(dt);
 
 		lerper->update(dt);
 		rec->update(dt);
@@ -158,7 +158,6 @@ namespace Game {
 		if(Input::IsPressed(49)) posManIndex = 0; // wrap around
 		if(Input::IsPressed(50)) posManIndex = 1; // bounce
 		if(Input::IsPressed(51)) posManIndex = 2; // border
-		if(Input::IsPressed(52)) showStars = !showStars;
 
 		if (oldPos != posManIndex) {
 			posManagers[posManIndex]->reset();
@@ -169,20 +168,19 @@ namespace Game {
 		return Input::IsPressed(Input::KEY_ESCAPE);
 	}
 
+	InverseFilter filter;
+
 	void draw(Core::Graphics& g) {
 		particleManager->draw(*eg);
 
-		if (showStars) {
-			stars1->draw(*eg);
-			stars2->draw(*eg);
-		}
+		sceneManager->draw(*eg);
 
 		rec->draw(*eg);
 
 		player->draw(*eg);
 		lerper->draw(*eg);
 
-		eg->draw(g);
+		eg->draw(g, filter);
 
 		// TODO: decouple/abstract this
 		if(posManIndex == 2) { // position manager set to border

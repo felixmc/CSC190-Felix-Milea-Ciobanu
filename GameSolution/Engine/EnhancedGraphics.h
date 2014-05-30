@@ -4,6 +4,7 @@
 #include "Core.h"
 #include "Vector2.h"
 #include "Color.h"
+#include "GraphicsFilter.h"
 #include <cmath>
 #include <string>
 
@@ -62,15 +63,20 @@ namespace Engine {
 			lastDrawn = 0;
 		}
 
-		void draw(Graphics& g) {
+		//inline void draw(Graphics& g, GraphicsFilter& gf) {
+		//	gf.filter(bitmapBuffer, WIDTH, HEIGHT);
+		//	draw(g);
+		//}
+
+		inline void draw(Graphics& g, GraphicsFilter& gf) {
 			int count = 0;
 
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int x = 0; x < WIDTH; x++) {
 					int color = bitmapBuffer[(y * WIDTH) + x];
-					color;
+
 					if (color != 0) {
-						g.SetColor(color);
+						g.SetColor(x < WIDTH / 10 && y < HEIGHT / 3 ? gf.filterPx(color) : color);
 						plot(g, Vector2((float)x, (float)y));
 						count++;
 					}

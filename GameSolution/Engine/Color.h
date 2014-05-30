@@ -4,8 +4,9 @@
 #include "Core.h"
 #include <cmath>
 
-#define RGBA(r,g,b,a)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)|(((DWORD)(BYTE)(a))<<24)))
-#define GetAValue(rgba)      (LOBYTE((rgba)>>24))
+#define RGBA(r,g,b,a)			((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)|(((DWORD)(BYTE)(a))<<24)))
+#define GetAValue(rgba)			(LOBYTE((rgba)>>24))
+#define AFilter(c,a)			RGBA(GetRValue(c),GetGValue(c),GetBValue(c),a)
 
 namespace Engine {
 	namespace Color {

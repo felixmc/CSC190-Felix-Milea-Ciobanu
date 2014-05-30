@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 #include "ExplosionParticleSystem.h"
-#include "Vector2.h"
+#include "Projectile.h"
 #include <vector>
 
 using namespace Engine;
@@ -35,10 +35,9 @@ private:
 	static const float FRICTION;
 	static const float TURRET_OFFSET;
 	static const float FIRE_DELAY;
-	static const float PROJ_V;
 	static const float PROJ_R;
 
-	std::vector<GameObject*> projectiles;
+	std::vector<Projectile*> projectiles;
 	ULONGLONG lastFired;
 
 	ShipController rotateLeftController;

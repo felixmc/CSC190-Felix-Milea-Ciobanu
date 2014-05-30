@@ -91,14 +91,21 @@
     <ClCompile Include="LerpEnemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerShip.cpp" />
+    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Recursor.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="StarScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LerpEnemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="PlayerShip.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="Recursor.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Star.h" />
     <ClInclude Include="StarScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

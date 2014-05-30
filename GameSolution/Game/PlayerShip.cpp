@@ -22,9 +22,6 @@ static Vector2 ship[] = {
 };
 
 static Vector2 gunShape[] = { Vector2(0, -4), Vector2(2, 3), Vector2(-2, 3) };
-static Vector2 proShape[] = { Vector2(0, -4), Vector2(1, 2), Vector2(-1, 2) };
-
-static Shape* projShape = SHAPE(proShape);
 
 const float PlayerShip::BASE_A = 25.f;
 const float PlayerShip::MAX_V = 350.0f;
@@ -32,8 +29,7 @@ const float PlayerShip::ROT_D = 1.2f;
 const float PlayerShip::SPEED = 7000.0f;
 const float PlayerShip::FRICTION = 50.0f;
 const float PlayerShip::TURRET_OFFSET = 5.0f;
-const float PlayerShip::FIRE_DELAY = 250;
-const float PlayerShip::PROJ_V = 300;
+const float PlayerShip::FIRE_DELAY = 220;
 const float PlayerShip::PROJ_R = 30;
 
 PlayerShip::PlayerShip(Vector2 startPos)
@@ -89,22 +85,18 @@ void PlayerShip::update(float dt) {
 		ULONGLONG now = GetTickCount64();
 		if (now - lastFired > FIRE_DELAY) {
 			lastFired = now;
-
-			GameObject* p = new GameObject(gun->position,*projShape);
-			p->rotation = gun->rotation;
-			p->color = Color::RED;
-			p->velocity = Vector2(sin(gun->rotation)*PROJ_V, -cos(gun->rotation)*PROJ_V);
+			Projectile* p = new Projectile(gun->position, gun->rotation);
 			projectiles.push_back(p);
 		}
 	}
 
 	for (unsigned int i = 0; i < projectiles.size(); i++) {
-		GameObject* p = projectiles[i];
+		Projectile* p = projectiles[i];
 		p->update(dt);
 	}
 
 	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
-		[&](GameObject* p) {
+		[&](Projectile* p) {
 			Vector2 pos = p->position;
 			bool isDead = pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
 
@@ -114,19 +106,7 @@ void PlayerShip::update(float dt) {
 			}
 
 			if (target != NULL && target->position.distance(p->position) <= PROJ_R) {
-				ExplosionParticleSystem * ps = new ExplosionParticleSystem(100);
-				ps->position = p->position;
-				ps->minVelocity = Vector2(-140,-140);
-				ps->maxVelocity = Vector2(140,140);
-				ps->minLifeTime = .1f;
-				ps->maxLifeTime  = 1.0f;
-				ps->minRadius = 2;
-				ps->maxRadius = 4;
-				ps->startColor = RGBA(255,0,0,200);
-				ps->endColor = RGBA(255,0,128,255);
-
-				Game::particleManager->add(ps);
-
+				p->detonate();
 				delete p;
 				return true;
 			}

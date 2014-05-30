@@ -1,6 +1,7 @@
 #ifndef _PARTICLE_SYSTEM_H_
 #define _PARTICLE_SYSTEM_H_
 
+#include "EngineMath.h"
 #include "Particle.h"
 #include <vector>
 #include <algorithm>
@@ -13,26 +14,18 @@ namespace Engine {
 	protected:
 		vector<Particle*> * particles;
 
-		inline float random(float a, float b) {
-			if (a > b)
-				return random(b, a);
-
-			float random = ((float) rand()) / (float) RAND_MAX;
-		    float diff = b - a;
-			float r = random * diff;
-			return a + r;
-		}
-
 		void operator=(ParticleSystem e) { e; }
 
-		inline void createParticle() {
-			Particle *p = new Particle(random(minLifeTime,maxLifeTime));
-			p->position = position + Vector2(random(minPositionOffset.x,maxPositionOffset.x),random(minPositionOffset.y,maxPositionOffset.y));
-			p->velocity = Vector2(random(minVelocity.x,maxVelocity.x),random(minVelocity.y,maxVelocity.y));
-			p->radius = (int)random((float)minRadius,(float)maxRadius);
+		inline Particle* createParticle() {
+			Particle *p = new Particle(Math::random(minLifeTime,maxLifeTime));
+			p->position = position + Vector2(Math::random(minPositionOffset.x,maxPositionOffset.x),Math::random(minPositionOffset.y,maxPositionOffset.y));
+			p->velocity = Vector2(Math::random(minVelocity.x,maxVelocity.x),Math::random(minVelocity.y,maxVelocity.y));
+			p->radius = (int)Math::random((float)minRadius,(float)maxRadius);
 			p->startColor = startColor;
 			p->endColor = endColor;
 			particles->push_back(p);
+
+			return p;
 		}
 
 	public:
@@ -42,6 +35,7 @@ namespace Engine {
 		float sizeDelta;
 		unsigned int size;
 		float minLifeTime, maxLifeTime;
+		bool dead;
 
 		ParticleSystem(unsigned int s) : size(s) {
 			minLifeTime = maxLifeTime = 10;
@@ -49,10 +43,11 @@ namespace Engine {
 			sizeDelta = 0;
 			startColor = endColor = RGB(255,255,255);
 			particles = new vector<Particle*>();
+			dead = false;
 		}
 
 		virtual bool isDead() {
-			return false;
+			return dead;
 		}
 
 		virtual void update(float dt) {

@@ -61,24 +61,28 @@ void StarScene::draw(EnhancedGraphics& g) {
 		for (int x = 0; x < VIEW_WIDTH; x++) {
 			int nx = x + (int)offset.x;
 			int ny = y + (int)offset.y;
-			while (nx < 0) { nx += WIDTH; }
+			/*while (nx < 0) { nx += WIDTH; }
 			while (ny < 0) { ny += HEIGHT; }
 			nx = nx % WIDTH;
 			ny = ny % HEIGHT;
 
-			int c = (ny * WIDTH) + nx;
+			int c = (ny * WIDTH) + nx;*/
+			
+//			g;c;
+			ny;nx;
+			g;
 
-			if (starCanvas[c]) {
-				float prob = (float) (rand()) / (float) (RAND_MAX);
-				if (prob < SHINE_FREQ/2.0f) {
-					g.drawBitmap(Vector2((float)x - radius,(float)y - radius), radius*2, radius*2, starBitmap);
-				} else {
-					prob = (float) (rand()) / (float) (RAND_MAX);
-					int c = prob < SHINE_FREQ ? 180 + (int)((rand()) / (float) (RAND_MAX) * 75) : 220;
-					g.setColor(RGB(c,c,c-50));
-					g.drawPoint((Vector2((float)x,(float)y)));
-				}
-			}
+			//if (starCanvas[c]) {
+			//	float prob = (float) (rand()) / (float) (RAND_MAX);
+			//	if (prob < SHINE_FREQ/2.0f) {
+			//		g.drawBitmap(Vector2((float)x - radius,(float)y - radius), radius*2, radius*2, starBitmap);
+			//	} else {
+			//		prob = (float) (rand()) / (float) (RAND_MAX);
+			//		int c = prob < SHINE_FREQ ? 180 + (int)((rand()) / (float) (RAND_MAX) * 75) : 220;
+			//		g.setColor(RGB(c,c,c-50));
+			//		g.drawPoint((Vector2((float)x,(float)y)));
+			//	}
+			//}
 		}
 	}
 }
