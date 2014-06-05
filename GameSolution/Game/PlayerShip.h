@@ -12,12 +12,12 @@ typedef bool (*ShipController)();
 
 /* A bit more code, but decoupled ship control from keyboard */
 struct PlayerShip : GameObject {
-	GameObject* gun, *target;
+	GameObject* gun;
 	ParticleSystem * leftPs, * rightPs;
+	std::vector<Projectile*> projectiles;
 
 	PlayerShip(Vector2);
 
-	void registerTarget(GameObject*);
 	void registerRotateLeft(ShipController);
 	void registerRotateRight(ShipController);
 	void registerMoveUp(ShipController);
@@ -35,9 +35,7 @@ private:
 	static const float FRICTION;
 	static const float TURRET_OFFSET;
 	static const float FIRE_DELAY;
-	static const float PROJ_R;
 
-	std::vector<Projectile*> projectiles;
 	ULONGLONG lastFired;
 
 	ShipController rotateLeftController;

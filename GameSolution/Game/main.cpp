@@ -1,5 +1,6 @@
 #include "Core.h"
 #include "Game.h"
+#include "Profiler.h"
 
 int main() {
 	Game::setup();

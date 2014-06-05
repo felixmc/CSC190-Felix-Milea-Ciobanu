@@ -5,10 +5,13 @@
 #include "Vector2.h"
 #include "Color.h"
 #include "GraphicsFilter.h"
+#include "Timer.h"
 #include <cmath>
 #include <string>
+#include <vector>
 
 using Core::Graphics;
+using std::vector;
 
 namespace Engine {
 
@@ -17,15 +20,16 @@ namespace Engine {
 		int* bitmapBuffer;
 		int curColor;
 		bool hasChanged;
-		ULONGLONG lastDrawn;
+		Timer timer;
+		//vector<Vector2> * changes;
 
-		inline void swap(float& f1, float& f2) {
+		inline void swap(float& f1, float& f2) const {
 			float temp = f1;
 			f1 = f2;
 			f2 = temp;
 		}
 
-		inline void swap(int& f1, int& f2) {
+		inline void swap(int& f1, int& f2) const {
 			int temp = f1;
 			f1 = f2;
 			f2 = temp;
@@ -50,9 +54,10 @@ namespace Engine {
 
 		inline void resetChanges() {
 			hasChanged = false;
+			//changes->clear();
 		}
 
-		inline bool isOnScreen(const Vector2& p) {
+		inline bool isOnScreen(const Vector2& p) const {
 			return p.x >= 0 && p.x < WIDTH && p.y >= 0 && p.y < HEIGHT;
 		}
 
@@ -60,7 +65,8 @@ namespace Engine {
 		EnhancedGraphics(int w, int h) : WIDTH(w), HEIGHT(h) {
 			bitmapBuffer = new int[WIDTH * HEIGHT];
 			curColor = RGB(255,255,255);
-			lastDrawn = 0;
+			timer.start();
+			//changes = new vector<Vector2>();
 		}
 
 		//inline void draw(Graphics& g, GraphicsFilter& gf) {
@@ -71,31 +77,49 @@ namespace Engine {
 		inline void draw(Graphics& g, GraphicsFilter& gf) {
 			int count = 0;
 
+			//for (unsigned int i = 0; i < changes->size(); i++) {
+			//	Vector2 p = changes->at(i);
+			//	int color = bitmapBuffer[((int)p.y * WIDTH) + (int)p.x];
+
+			//	if (color != 0) {
+			//		g.SetColor(color);
+			//		gf;
+			//		//g.SetColor(x < WIDTH / 10 && y < HEIGHT / 3 ? gf.filterPx(color) : color);
+			//		plot(g, p);
+			//		count++;
+			//	}
+			//}
+
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int x = 0; x < WIDTH; x++) {
 					int color = bitmapBuffer[(y * WIDTH) + x];
 
 					if (color != 0) {
-						g.SetColor(x < WIDTH / 10 && y < HEIGHT / 3 ? gf.filterPx(color) : color);
+						g.SetColor(color);
+						gf;
+						//g.SetColor(x < WIDTH / 10 && y < HEIGHT / 3 ? gf.filterPx(color) : color);
 						plot(g, Vector2((float)x, (float)y));
 						count++;
 					}
 				}
 			}
 
+			float time = timer.interval();
+			int frames = (int)floorf(1000.0f / time);
+
+
 			g.SetColor(RGB(255,255,255));
+			g.DrawString(20,HEIGHT - 65,std::to_string(frames).c_str());
+			g.DrawString(20,HEIGHT - 45,std::to_string((int)time).c_str());
+			g.DrawString(20,HEIGHT - 25,std::to_string(count).c_str());
 
-			g.DrawString(20,HEIGHT - 20,std::to_string(count).c_str());
-			g.DrawString(60,HEIGHT - 20,"px/frame");
+			g.SetColor(RGB(255,155,0));
+			g.DrawString(60,HEIGHT - 65,"fps");
+			g.DrawString(60,HEIGHT - 45,"ms/frame");
+			g.DrawString(60,HEIGHT - 25,"px/frame");
 
-			ULONGLONG now = GetTickCount64();
-			int frames = (int)(1000.0f / (now - lastDrawn));
-
-			g.DrawString(20,HEIGHT - 40,std::to_string(frames).c_str());
-			g.DrawString(60,HEIGHT - 40,"fps");
-
+			g.SetColor(RGB(255,255,255));
 			resetChanges();
-			lastDrawn = now;
 		}
 
 		void drawBitmap(const Vector2& start, int width, int height, int* data) {
@@ -109,19 +133,24 @@ namespace Engine {
 
 		inline void drawPoint(const Vector2& p) {
 			if (isOnScreen(p)) {
-				int coor = ((int)p.y * WIDTH) + (int)p.x;
-				int c = bitmapBuffer[coor];
-
 				float a = (255 - GetAValue(curColor)) / 255.0f;
-				float na = 1 - a;
 
-				bitmapBuffer[coor] = RGB(
-					min((GetRValue(c) * na) + (GetRValue(curColor) * a),255),
-					min((GetGValue(c) * na) + (GetGValue(curColor) * a),255),
-					min((GetBValue(c) * na) + (GetBValue(curColor) * a),255)
-					);
+				if (a != 0) {
+					int coor = ((int)p.y * WIDTH) + (int)p.x;
+					int c = bitmapBuffer[coor];
+					float na = 1 - a;
 
-				change();
+					bitmapBuffer[coor] = RGB(
+						min((GetRValue(c) * na) + (GetRValue(curColor) * a),255),
+						min((GetGValue(c) * na) + (GetGValue(curColor) * a),255),
+						min((GetBValue(c) * na) + (GetBValue(curColor) * a),255)
+						);
+
+					//if (c == 0)
+						//changes->push_back(p);
+					
+					change();
+				}
 			}
 		}
 

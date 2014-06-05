@@ -53,7 +53,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PROFILING_ON;WIN32;_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\GameSolution\Core\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -94,11 +94,14 @@
     <ClCompile Include="PositionBouncer.cpp" />
     <ClCompile Include="PositionBoundary.cpp" />
     <ClCompile Include="PositionWrapper.cpp" />
+    <ClCompile Include="Profiler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.h" />
     <ClInclude Include="ExplosionParticleSystem.h" />
     <ClInclude Include="GraphicsFilter.h" />
+    <ClInclude Include="Profiler.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="IDrawable.h" />
     <ClInclude Include="DrawValue.h" />
     <ClInclude Include="Engine.h" />

@@ -12,11 +12,12 @@ namespace Engine {
 
 	public:
 		float delay;
-		Vector2 radialVelocity;
+		bool radial;
 
 		ExplosionParticleSystem(int s) : ParticleSystem(s) {
 			isNew = true;
 			delay = 0;
+			radial = false;
 		}
 
 		virtual bool isDead() {
@@ -29,7 +30,11 @@ namespace Engine {
 				if (isNew) {
 					while (particles->size() < size) {
 						Particle * p = createParticle();
-						p->velocity = ( Matrix3::rotation(Math::random(0, 2 * Math::PI)) * p->velocity );
+						if (radial) {
+							p->velocity = ( Matrix3::rotation(Math::random(0, 2 * Math::PI)) * p->velocity );
+						} else {
+						
+						}	
 					}
 					isNew = false;
 				}

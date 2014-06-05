@@ -1,24 +1,24 @@
 ﻿#include "Game.h"
-#include "PlayerShip.h"
-#include "LerpEnemy.h"
 #include "PositionWrapper.h"
 #include "PositionBouncer.h"
 #include "PositionBoundary.h"
 #include "Shape.h"
-#include "DrawValue.h"
 #include "SceneManager.h"
 #include "Recursor.h"
 #include "StarScene.h"
 #include "InverseFilter.h"
+#include "DrawValue.h"
 #include <ctime>
 #include <cmath>
 
 using Core::Input;
 
+Engine::Profiler Engine::Profiler::instance;
+
 namespace Game {
 	const int SCREEN_WIDTH = 1280;
 	const int SCREEN_HEIGHT = 720;
-	ParticleManager* particleManager;
+	const Vector2 * center;
 
 	Vector2 boundaryPoints[] = {
 		Vector2(SCREEN_WIDTH/2.f,0),
@@ -27,25 +27,19 @@ namespace Game {
 		Vector2(0,SCREEN_HEIGHT/2.f)
 	};
 
-	Vector2 lerpPoints[] = {
-		Vector2(50), Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT - 100),
-		Vector2(SCREEN_WIDTH - 130, SCREEN_HEIGHT/2),
-		Vector2(SCREEN_WIDTH - 200, 67), Vector2(90, SCREEN_HEIGHT - 70)
-	};
-
 	Shape& boundary = *SHAPE(boundaryPoints);
-
-	EnhancedGraphics* eg;
-
-	//std::vector<GameObject>* gameObjects;
 	PositionManager* posManagers[3];
 	int posManIndex = 0;
 
-	const Vector2 * center;
+	EnhancedGraphics* eg;
+	Timer timer;
+
+	ParticleManager* particleManager;
+	EnemyManager * enemyManager;
+	SceneManager * sceneManager;
+
 	PlayerShip * player;
 	Recursor* rec;
-	LerpEnemy * lerper;
-	SceneManager * sceneManager;
 
 	//const int sides = 10;
 	//const int size = 5;
@@ -76,24 +70,15 @@ namespace Game {
 		g.SetColor(Color::WHITE);
 		g.DrawString(x, 20, "[ ] [ ] [ ]");
 		g.DrawString(x, 40, "[ ] [ ] [ ] [ ]");
-		//g.DrawString(x, 60, "[ ]");
 
 		g.SetColor(Color::CYAN);
 		g.DrawString(x, 20, " 1   2   3");
 		g.DrawString(x, 40, " w   a   s   d");
-		//g.DrawString(x, 60, " 4");
 
 		g.SetColor(Color::YELLOW);
 		g.DrawString(x2, 20, "Change borders");
 		g.DrawString(x2, 40, "Control ship");
-		//g.DrawString(x2, 60, "Toggle stars");
-		g.DrawString(x2, 120, "Use cursor to aim and left click to fire.");
-
-		//g.SetColor(RGB(128,128,128));
-		//g.DrawString(x2, 90, "[stars are experimental and may cause lag]");
-
-		g.SetColor(RGB(255,128,0));
-		g.DrawString(x2, 140, "Fire at lerper for explosions.");
+		g.DrawString(x2, 70, "Use cursor to aim and left click to fire.");
 
 		g.SetColor(Color::GREEN);
 		Matrix3 trans = Matrix3::translation(player->position)*Matrix3::rotation(player->rotation);
@@ -102,6 +87,9 @@ namespace Game {
 
 	void setup() {
 		srand((int)time(0));
+
+		PROFILER.initialize("profiler");
+
 		center = new Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 
 		eg = new EnhancedGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -112,13 +100,11 @@ namespace Game {
 		posManagers[1] = new PositionBouncer(SCREEN_WIDTH, SCREEN_HEIGHT);
 		posManagers[2] = new PositionBoundary(boundary);
 
-		lerper = new LerpEnemy(*SHAPE(lerpPoints));
-		lerper->color = Color::MAGENTA;
-
 		player = new PlayerShip(*center);
 		player->color = Color::CYAN2;
 		player->gun->color = Color::YELLOW;
-		player->registerTarget(lerper);
+
+		enemyManager = new EnemyManager(2000);
 
 		Scene::init();
 
@@ -145,14 +131,36 @@ namespace Game {
 	}
 
 	bool update(float dt) {
+
+		PROFILER.newFrame();
+		timer.start();
+
 		sceneManager->update(dt);
 
-		lerper->update(dt);
 		rec->update(dt);
 		player->update(dt);
 		posManagers[posManIndex]->reposition(*player, dt);
+		PROFILER.addEntry("update", timer.elapsed());
 
 		int oldPos = posManIndex;
+
+		float spRand = Math::random(0,1);
+
+		if (spRand < .25) {
+			enemyManager->spawnPosition = rec->position;
+			enemyManager->baseColor = rec->color;
+		} else if (spRand < .5) {
+			enemyManager->spawnPosition = rec->child->position;
+			enemyManager->baseColor = rec->child->color;
+		} else if (spRand < .75) {
+			enemyManager->spawnPosition = rec->child->child->position;
+			enemyManager->baseColor = rec->child->child->color;
+		} else {
+			enemyManager->spawnPosition = rec->child->child->child->position;
+			enemyManager->baseColor = rec->child->child->child->color;
+		}
+
+		enemyManager->update(dt);
 
 		// TODO: decouple/abstract this
 		if(Input::IsPressed(49)) posManIndex = 0; // wrap around
@@ -165,20 +173,23 @@ namespace Game {
 
 		particleManager->update(dt);
 
-		return Input::IsPressed(Input::KEY_ESCAPE);
+		if (Input::IsPressed(Input::KEY_ESCAPE)) {
+			PROFILER.shutdown();
+			return true;
+		}
+
+		return false;
 	}
 
 	InverseFilter filter;
 
 	void draw(Core::Graphics& g) {
 		particleManager->draw(*eg);
-
 		sceneManager->draw(*eg);
-
 		rec->draw(*eg);
 
 		player->draw(*eg);
-		lerper->draw(*eg);
+		enemyManager->draw(*eg);
 
 		eg->draw(g, filter);
 
@@ -191,6 +202,10 @@ namespace Game {
 				g.DrawLine(p1.x, p1.y, p2.x, p2.y);
 			}
 		}
+
+		//g.SetColor(RGB(255,255,255));
+		//EnemyMinionShip ems = (EnemyMinionShip) /*enemyManager->enemies->at(0)*/;
+		//drawValue(g,100,200,enemyManager->enemies->at(0)->position);
 
 		drawInstuctions(g);
 	}

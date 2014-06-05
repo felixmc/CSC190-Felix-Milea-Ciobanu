@@ -30,7 +30,6 @@ const float PlayerShip::SPEED = 7000.0f;
 const float PlayerShip::FRICTION = 50.0f;
 const float PlayerShip::TURRET_OFFSET = 5.0f;
 const float PlayerShip::FIRE_DELAY = 220;
-const float PlayerShip::PROJ_R = 30;
 
 PlayerShip::PlayerShip(Vector2 startPos)
 : GameObject(startPos, *SHAPE(ship)) {
@@ -90,23 +89,14 @@ void PlayerShip::update(float dt) {
 		}
 	}
 
-	for (unsigned int i = 0; i < projectiles.size(); i++) {
-		Projectile* p = projectiles[i];
-		p->update(dt);
-	}
-
 	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
 		[&](Projectile* p) {
+			p->update(dt);
+
 			Vector2 pos = p->position;
-			bool isDead = pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
+			bool isDead = p->isDead() || pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
 
 			if (isDead) {
-				delete p;
-				return true;
-			}
-
-			if (target != NULL && target->position.distance(p->position) <= PROJ_R) {
-				p->detonate();
 				delete p;
 				return true;
 			}
@@ -165,7 +155,6 @@ inline void PlayerShip::move(float dt) {
 	}
 }
 
-void PlayerShip::registerTarget(GameObject* t) { target = t; };
 void PlayerShip::registerRotateLeft(ShipController c) { rotateLeftController = c; }
 void PlayerShip::registerRotateRight(ShipController c) { rotateRightController = c; }
 void PlayerShip::registerMoveUp(ShipController c) { moveUpController = c; }
