@@ -16,7 +16,7 @@ using Core::Input;
 Engine::Profiler Engine::Profiler::instance;
 
 #if PROFILING_ON
-#define PROFILER_START timer.start(); Engine::Profiler::getInstance().newFrame();
+#define PROFILER_START timer.start();
 #define	PROFILER_RECORD(cat) Engine::Profiler::getInstance().addEntry(cat,timer.elapsed());
 #else
 #define PROFILER_START
@@ -139,6 +139,8 @@ namespace Game {
 	}
 
 	bool update(float dt) {
+		PROFILER.newFrame();
+
 
 		PROFILER_START
 		sceneManager->update(dt);
