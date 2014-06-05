@@ -15,6 +15,14 @@ using Core::Input;
 
 Engine::Profiler Engine::Profiler::instance;
 
+#if PROFILING_ON
+#define PROFILER_START timer.start(); Engine::Profiler::getInstance().newFrame();
+#define	PROFILER_RECORD(cat) Engine::Profiler::getInstance().addEntry(cat,timer.elapsed());
+#else
+#define PROFILER_START
+#define PROFILER_RECORD(cat)
+#endif
+
 namespace Game {
 	const int SCREEN_WIDTH = 1280;
 	const int SCREEN_HEIGHT = 720;
@@ -132,18 +140,20 @@ namespace Game {
 
 	bool update(float dt) {
 
-		PROFILER.newFrame();
-		timer.start();
-
+		PROFILER_START
 		sceneManager->update(dt);
-
 		rec->update(dt);
+		PROFILER_RECORD("scene update")
+
+		PROFILER_START
 		player->update(dt);
 		posManagers[posManIndex]->reposition(*player, dt);
-		PROFILER.addEntry("update", timer.elapsed());
+		PROFILER_RECORD("player update")
+
 
 		int oldPos = posManIndex;
 
+		PROFILER_START
 		float spRand = Math::random(0,1);
 
 		if (spRand < .25) {
@@ -161,6 +171,7 @@ namespace Game {
 		}
 
 		enemyManager->update(dt);
+		PROFILER_RECORD("enemy update")
 
 		// TODO: decouple/abstract this
 		if(Input::IsPressed(49)) posManIndex = 0; // wrap around
@@ -171,7 +182,9 @@ namespace Game {
 			posManagers[posManIndex]->reset();
 		}
 
+		PROFILER_START
 		particleManager->update(dt);
+		PROFILER_RECORD("particles update")
 
 		if (Input::IsPressed(Input::KEY_ESCAPE)) {
 			PROFILER.shutdown();
@@ -184,14 +197,26 @@ namespace Game {
 	InverseFilter filter;
 
 	void draw(Core::Graphics& g) {
+		PROFILER_START
 		particleManager->draw(*eg);
+		PROFILER_RECORD("particles draw")
+		
+		PROFILER_START
 		sceneManager->draw(*eg);
 		rec->draw(*eg);
+		PROFILER_RECORD("scene draw")
 
+		PROFILER_START
 		player->draw(*eg);
-		enemyManager->draw(*eg);
+		PROFILER_RECORD("player draw")
 
+		PROFILER_START
+		enemyManager->draw(*eg);
+		PROFILER_RECORD("enemies draw")
+
+		PROFILER_START
 		eg->draw(g, filter);
+		PROFILER_RECORD("frame draw")
 
 		// TODO: decouple/abstract this
 		if(posManIndex == 2) { // position manager set to border

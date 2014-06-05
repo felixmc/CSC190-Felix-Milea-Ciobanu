@@ -81,27 +81,27 @@ namespace Engine {
 		ULONGLONG intervalTime;
 
 	public:
-		void start() {
+		inline void start() {
 			startTime = GetTickCount64();
 			intervalTime = startTime;
 		}
 
-		float stop() {
+		inline float stop() {
 			ULONGLONG now = GetTickCount64();
 			return (float)(now - startTime);
 		}
 
-		float elapsed() const {
+		inline float elapsed() const {
 			ULONGLONG now = GetTickCount64();
 			return (float)(now - startTime);
 		}
 
-		float intervalElapsed() const {
+		inline float intervalElapsed() const {
 			ULONGLONG now = GetTickCount64();
 			return (float)(now - intervalTime);
 		}
 
-		float interval() {
+		inline float interval() {
 			ULONGLONG now = GetTickCount64();
 			float result = (float)(now - intervalTime);
 			intervalTime = now;
