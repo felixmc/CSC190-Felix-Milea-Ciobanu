@@ -14,7 +14,7 @@ void EnemyManager::update(float dt) {
 		return p->isDead;
 	}), enemies->end());
 
-	interval = baseInterval + (enemies->size() * 100);
+	interval = baseInterval + (enemies->size() / 1000.0f);
 
 	if (timer.intervalElapsed() >= interval) {
 		spawnEnemy();

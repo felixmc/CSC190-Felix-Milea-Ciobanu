@@ -11,7 +11,7 @@ static Vector2 diamond[] = {
 	Vector2(0,3.6f),Vector2(-6,-3.6f),Vector2(6,-3.6f)
 };
 
-const float EnemyMinionShip::PING_DELAY = 250;
+const float EnemyMinionShip::PING_DELAY = .250f;
 const float EnemyMinionShip::SPEED = 200;
 
 EnemyMinionShip::EnemyMinionShip() : Enemy(Vector2(200,200), *SHAPE(diamond)) {
