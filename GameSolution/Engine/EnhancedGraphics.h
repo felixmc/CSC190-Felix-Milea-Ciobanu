@@ -105,12 +105,12 @@ namespace Engine {
 			}
 
 			float time = timer.interval();
-			int frames = (int)floorf(1000.0f / time);
+			int frames = (int)floorf(1.0f / time);
 
 
 			g.SetColor(RGB(255,255,255));
 			g.DrawString(20,HEIGHT - 65,std::to_string(frames).c_str());
-			g.DrawString(20,HEIGHT - 45,std::to_string((int)time).c_str());
+			g.DrawString(20,HEIGHT - 45,std::to_string((int)(time * 1000)).c_str());
 			g.DrawString(20,HEIGHT - 25,std::to_string(count).c_str());
 
 			g.SetColor(RGB(255,155,0));

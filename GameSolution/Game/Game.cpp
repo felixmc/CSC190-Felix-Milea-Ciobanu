@@ -112,7 +112,7 @@ namespace Game {
 		player->color = Color::CYAN2;
 		player->gun->color = Color::YELLOW;
 
-		enemyManager = new EnemyManager(2000);
+		enemyManager = new EnemyManager(2);
 
 		Scene::init();
 
