@@ -4,10 +4,11 @@
 #include "EnhancedGraphics.h"
 #include "Matrix3.h"
 #include "EngineMath.h"
+#include <cassert>
 
 namespace Engine {
 
-	struct Particle {
+	struct ENGINE_SHARED Particle {
 		Vector2 position, velocity;
 		int radius;
 		int startColor;
@@ -28,12 +29,18 @@ namespace Engine {
 
 		inline void draw(EnhancedGraphics& g) {
 
-			for (int i = 0; i < radius; i++) {
-				g.setColor(Color::interpolate(startColor, endColor, (float)i / radius));
-				float ps = 2 * Math::PI * radius;
-				for (int j = 0; j < ps; j++) {
-					Vector2 p = Matrix3::rotation(j/ps*2*Engine::Math::PI) * Vector2(0,(float)i);
-					g.drawPoint(position+p);
+			int dim = (radius*2)+1;
+
+			dim;g;
+
+			float* map = Particle::particleMap(radius);
+
+			
+			for (int yi = 0; yi < dim; yi++) {
+				for (int xi = 0; xi < dim; xi++) {
+					float mu = map[(yi * dim) + (xi)];
+					g.setColor(Color::interpolate(startColor,endColor,mu));
+					g.drawPoint(Vector2(xi + position.x - (radius), yi+position.y - (radius)));
 				}
 			}
 
@@ -41,6 +48,14 @@ namespace Engine {
 
 	private:
 		void operator=(Particle e) { e; }
+
+		static bool loaded[20];
+		static float * cache[20];
+
+	public:
+
+		static float* particleMap(int);
+
 	};
 
 }

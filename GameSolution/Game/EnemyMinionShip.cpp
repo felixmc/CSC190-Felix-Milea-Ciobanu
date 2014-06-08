@@ -65,7 +65,7 @@ inline float EnemyMinionShip::cosInter(float a, float b, float mu) {
 	return (a*(1-mu2)+b*mu2);
 }
 
-void EnemyMinionShip::draw(EnhancedGraphics& g) {
+inline void EnemyMinionShip::draw(EnhancedGraphics& g) {
 	GameObject::draw(g);
 }
 
@@ -75,15 +75,13 @@ void EnemyMinionShip::explode(Projectile& pro) {
 	ExplosionParticleSystem * ps = new ExplosionParticleSystem(120);
 	ps->position = position;
 	ps->radial = false;
-	ps->minVelocity = Vector2(-50);
-	ps->maxVelocity = Vector2(50);
-	//ps->minPositionOffset = pro.velocity.normalize().perpCCW() * -20;
-	//ps->maxPositionOffset = pro.velocity.normalize().perpCW() * 20;
+	ps->minVelocity = Vector2(-70);
+	ps->maxVelocity = Vector2(70);
 	ps->minLifeTime = .15f;
 	ps->maxLifeTime  = .5f;
 	ps->minRadius = 1;
 	ps->maxRadius = 2;
-	ps->startColor = RGBA(GetRValue(color),GetGValue(color),GetBValue(color),230);
+	ps->startColor = RGBA(GetRValue(color),GetGValue(color),GetBValue(color),170);
 	ps->endColor = RGBA(GetRValue(color),GetGValue(color),GetBValue(color),255);
 		
 	Game::particleManager->add(ps);

@@ -69,12 +69,7 @@ namespace Engine {
 			//changes = new vector<Vector2>();
 		}
 
-		//inline void draw(Graphics& g, GraphicsFilter& gf) {
-		//	gf.filter(bitmapBuffer, WIDTH, HEIGHT);
-		//	draw(g);
-		//}
-
-		inline void draw(Graphics& g, GraphicsFilter& gf) {
+		inline void draw(Graphics& g) {
 			int count = 0;
 
 			//for (unsigned int i = 0; i < changes->size(); i++) {
@@ -96,8 +91,6 @@ namespace Engine {
 
 					if (color != 0) {
 						g.SetColor(color);
-						gf;
-						//g.SetColor(x < WIDTH / 10 && y < HEIGHT / 3 ? gf.filterPx(color) : color);
 						plot(g, Vector2((float)x, (float)y));
 						count++;
 					}

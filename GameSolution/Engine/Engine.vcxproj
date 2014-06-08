@@ -88,15 +88,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AClass.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="PositionBouncer.cpp" />
     <ClCompile Include="PositionBoundary.cpp" />
     <ClCompile Include="PositionWrapper.cpp" />
     <ClCompile Include="Profiler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AClass.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ExplosionParticleSystem.h" />
     <ClInclude Include="GraphicsFilter.h" />

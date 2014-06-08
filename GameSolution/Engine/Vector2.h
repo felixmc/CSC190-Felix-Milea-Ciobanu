@@ -1,12 +1,13 @@
 #ifndef _VECTOR2_H_
 #define _VECTOR2_H_
 
+#include "ExportHeader.h"
 #include <iostream>
 #include <cmath>
 
 namespace Engine {
 
-	struct Vector2 {
+	struct ENGINE_SHARED Vector2 {
 		float x, y;
 		Vector2() : x(0), y(0) {};
 		explicit Vector2(float d) : x(d), y(d) {};

@@ -112,7 +112,7 @@ namespace Game {
 		player->color = Color::CYAN2;
 		player->gun->color = Color::YELLOW;
 
-		enemyManager = new EnemyManager(2);
+		enemyManager = new EnemyManager(5);
 
 		Scene::init();
 
@@ -141,22 +141,21 @@ namespace Game {
 	bool update(float dt) {
 		PROFILER.newFrame();
 
-
 		PROFILER_START
-		sceneManager->update(dt);
+			sceneManager->update(dt);
 		rec->update(dt);
 		PROFILER_RECORD("scene update")
 
-		PROFILER_START
-		player->update(dt);
+			PROFILER_START
+			player->update(dt);
 		posManagers[posManIndex]->reposition(*player, dt);
 		PROFILER_RECORD("player update")
 
 
-		int oldPos = posManIndex;
+			int oldPos = posManIndex;
 
 		PROFILER_START
-		float spRand = Math::random(0,1);
+			float spRand = Math::random(0,1);
 
 		if (spRand < .25) {
 			enemyManager->spawnPosition = rec->position;
@@ -175,8 +174,8 @@ namespace Game {
 		enemyManager->update(dt);
 		PROFILER_RECORD("enemy update")
 
-		// TODO: decouple/abstract this
-		if(Input::IsPressed(49)) posManIndex = 0; // wrap around
+			// TODO: decouple/abstract this
+			if(Input::IsPressed(49)) posManIndex = 0; // wrap around
 		if(Input::IsPressed(50)) posManIndex = 1; // bounce
 		if(Input::IsPressed(51)) posManIndex = 2; // border
 
@@ -185,56 +184,50 @@ namespace Game {
 		}
 
 		PROFILER_START
-		particleManager->update(dt);
+			particleManager->update(dt);
 		PROFILER_RECORD("particles update")
 
-		if (Input::IsPressed(Input::KEY_ESCAPE)) {
-			PROFILER.shutdown();
-			return true;
-		}
+			if (Input::IsPressed(Input::KEY_ESCAPE)) {
+				PROFILER.shutdown();
+				return true;
+			}
 
-		return false;
+			return false;
 	}
-
-	InverseFilter filter;
 
 	void draw(Core::Graphics& g) {
 		PROFILER_START
-		particleManager->draw(*eg);
+			particleManager->draw(*eg);
 		PROFILER_RECORD("particles draw")
-		
-		PROFILER_START
-		sceneManager->draw(*eg);
+
+			PROFILER_START
+			sceneManager->draw(*eg);
 		rec->draw(*eg);
 		PROFILER_RECORD("scene draw")
 
-		PROFILER_START
-		player->draw(*eg);
+			PROFILER_START
+			player->draw(*eg);
 		PROFILER_RECORD("player draw")
 
-		PROFILER_START
-		enemyManager->draw(*eg);
+			PROFILER_START
+			enemyManager->draw(*eg);
 		PROFILER_RECORD("enemies draw")
 
-		PROFILER_START
-		eg->draw(g, filter);
+			PROFILER_START
+			eg->draw(g);
 		PROFILER_RECORD("frame draw")
 
-		// TODO: decouple/abstract this
-		if(posManIndex == 2) { // position manager set to border
-			g.SetColor(RGB(255,255,0));
-			for (int i = 0; i < boundary.size; i++) {
-				Vector2 p1 = boundary.points[i];
-				Vector2 p2 = boundary.points[(i + 1) % boundary.size];
-				g.DrawLine(p1.x, p1.y, p2.x, p2.y);
+			// TODO: decouple/abstract this
+			if(posManIndex == 2) { // position manager set to border
+				g.SetColor(RGB(255,255,0));
+				for (int i = 0; i < boundary.size; i++) {
+					Vector2 p1 = boundary.points[i];
+					Vector2 p2 = boundary.points[(i + 1) % boundary.size];
+					g.DrawLine(p1.x, p1.y, p2.x, p2.y);
+				}
 			}
-		}
 
-		//g.SetColor(RGB(255,255,255));
-		//EnemyMinionShip ems = (EnemyMinionShip) /*enemyManager->enemies->at(0)*/;
-		//drawValue(g,100,200,enemyManager->enemies->at(0)->position);
-
-		drawInstuctions(g);
+			drawInstuctions(g);
 	}
 
 }
