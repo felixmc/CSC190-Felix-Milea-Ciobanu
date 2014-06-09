@@ -4,7 +4,7 @@ bool Engine::Particle::loaded[20];
 float * Engine::Particle::cache[20];
 
 float* Engine::Particle::particleMap(const int radius) {
-	assert(radius < 20 && radius > 0);
+	//assert(radius < 20 && radius > 0);
 	if (!loaded[radius]) {
 		int size = (int)pow((radius*2)+1,2);
 		cache[radius] = new float[size];

@@ -4,7 +4,6 @@
 #include "EnhancedGraphics.h"
 #include "Matrix3.h"
 #include "EngineMath.h"
-#include <cassert>
 
 namespace Engine {
 

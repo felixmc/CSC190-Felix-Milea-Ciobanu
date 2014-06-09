@@ -130,5 +130,8 @@
     <ClInclude Include="WaveSound.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

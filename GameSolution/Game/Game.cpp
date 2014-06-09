@@ -11,6 +11,7 @@
 #include <ctime>
 #include <cmath>
 #include "SoundClass.h"
+#include "Assert.h"
 
 using Core::Input;
 
@@ -98,9 +99,8 @@ namespace Game {
 	void setup() {
 		srand((int)time(0));
 
-		PROFILER.initialize("profiler");
+		PROFILER_INIT
 
-		
 		LOG(Warning, "Warning Message");
 		LOG(Error, "Error Message");
 		LOG(Severe, "Severe Message");
@@ -152,7 +152,7 @@ namespace Game {
 	}
 
 	bool update(float dt) {
-		PROFILER.newFrame();
+		PROFILER_FRAME
 
 		PROFILER_START
 			sceneManager->update(dt);
@@ -201,8 +201,8 @@ namespace Game {
 		PROFILER_RECORD("particles update")
 
 			if (Input::IsPressed(Input::KEY_ESCAPE)) {
-				SAVE_LOG
-				PROFILER.shutdown();
+				LOG_SAVE
+				PROFILER_SAVE
 				return true;
 			}
 

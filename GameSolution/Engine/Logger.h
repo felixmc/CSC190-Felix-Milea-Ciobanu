@@ -16,7 +16,7 @@ namespace Engine {
 
 #ifdef LOGGING
 #define LOG( severity, message) Logger::Log( severity, message, __FILE__, __LINE__ );
-#define SAVE_LOG Logger::shutDown();
+#define LOG_SAVE Logger::shutDown();
 #else
 	#define LOG( severity, message)
 	#define SAVE_LOG

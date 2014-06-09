@@ -53,7 +53,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>LOGGING;PROFILING_ON;WIN32;_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ASSERT_ON;LOGGING;PROFILING_ON;WIN32;_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\GameSolution\Core\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AClass.h" />
+    <ClInclude Include="Assert.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ExplosionParticleSystem.h" />
     <ClInclude Include="GraphicsFilter.h" />

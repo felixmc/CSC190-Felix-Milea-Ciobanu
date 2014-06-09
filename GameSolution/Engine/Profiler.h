@@ -1,12 +1,9 @@
 #ifndef _ENGINE_PROFILER_H_
 #define _ENGINE_PROFILER_H_
 
-#if PROFILING_ON
-#include <cassert>
 #include <fstream>
 #include <ctime>
 #include <cstring>
-#endif
 
 namespace Engine {
 
@@ -15,10 +12,9 @@ namespace Engine {
 		Profiler(const Profiler&);
 		Profiler& operator=(const Profiler&);
 		static Profiler instance;
-#if PROFILING_ON
+
 		static const unsigned int MAX_FRAME_SAMPLES = 1000;
 		static const unsigned int MAX_PROFILE_CATEGORIES = 20;
-		const char* file;
 		int frameIndex;
 		unsigned int categoryIndex;
 		unsigned int numUsedCategories;
@@ -37,12 +33,11 @@ namespace Engine {
 			}
 		}
 
-#endif
 	public:
 		static Profiler& getInstance() {
 			return instance;
 		}
-#if PROFILING_ON
+
 		void addEntry(const char* categoryName, float time) {
 			categoryName;
 			time;
@@ -61,35 +56,29 @@ namespace Engine {
 
 		void newFrame() {
 			if (frameIndex > 0) {
-				assert(categoryIndex == numUsedCategories);
+				//assert(categoryIndex == numUsedCategories);
 			}
 
 			frameIndex++;
 			categoryIndex = 0;
 		}
 
-		void initialize(const char* filename) {
-			file = filename;
+		void initialize() {
 			frameIndex = -1;
 			categoryIndex = 0;
 			numUsedCategories = 0;
 		}
 
 		void shutdown() {
-
-			char filename[80];
-
 			time_t rawtime;
 			struct tm timeinfo;
+			char buffer [80];
+
 			time (&rawtime);
-			localtime_s(&timeinfo,&rawtime);
+			localtime_s (&timeinfo,&rawtime);
+			strftime (buffer,80,"data/profiler/%m-%d-%Y %H-%M-%S.csv",&timeinfo);
 
-			strcpy_s(filename,file);
-			//strftime(filename,80," %m-%d-%Y %H:%M:%S.html",&timeinfo);
-
-			//strcat_s(filename,80,the_date);
-			strcat_s(filename,80,".html");
-			fileStream.open(filename);
+			fileStream.open(buffer);
 
 			for (unsigned int i = 0; i < numUsedCategories; i++) {
 				fileStream << categories[i].name;
@@ -120,16 +109,18 @@ namespace Engine {
 
 			fileStream.close();
 		}
-#else
-		void addEntry(const char* categoryName, float time) {time;categoryName;}
-		void newFrame() {}
-		void initialize(const char* filename) {filename;}
-		void shutdown() {}
-#endif
 	};
 
 }
 
-#define PROFILER Profiler::getInstance()
+#if PROFILING_ON
+#define PROFILER_SAVE Profiler::getInstance().shutdown();
+#define PROFILER_FRAME Profiler::getInstance().newFrame();
+#define PROFILER_INIT Profiler::getInstance().initialize();
+#else
+#define PROFILER_SAVE
+#define PROFILER_FRAME
+#define PROFILER_INIT
+#endif
 
 #endif
