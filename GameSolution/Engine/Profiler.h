@@ -74,19 +74,21 @@ namespace Engine {
 			categoryIndex = 0;
 			numUsedCategories = 0;
 		}
-		
+
 		void shutdown() {
-			//time_t rawtime;
-			//struct tm * timeinfo = 0;
-			//char filename [80];
 
-			//time (&rawtime);
-			//localtime_s(timeinfo,&rawtime);
-
-			//strftime(filename,80," %m-%d-%Y %H:%M:%S.csv",timeinfo);
 			char filename[80];
-			strcpy_s(filename,80,file);
-			strcat_s(filename,80,".csv");
+
+			time_t rawtime;
+			struct tm timeinfo;
+			time (&rawtime);
+			localtime_s(&timeinfo,&rawtime);
+
+			strcpy_s(filename,file);
+			//strftime(filename,80," %m-%d-%Y %H:%M:%S.html",&timeinfo);
+
+			//strcat_s(filename,80,the_date);
+			strcat_s(filename,80,".html");
 			fileStream.open(filename);
 
 			for (unsigned int i = 0; i < numUsedCategories; i++) {
@@ -96,7 +98,7 @@ namespace Engine {
 
 			bool wrapped = frameIndex >= MAX_FRAME_SAMPLES && frameIndex != -1;
 			unsigned int startIndex, endIndex;
-			
+
 			if (wrapped) {
 				endIndex = frameIndex % MAX_FRAME_SAMPLES;
 				startIndex = (endIndex + 1) % MAX_FRAME_SAMPLES;

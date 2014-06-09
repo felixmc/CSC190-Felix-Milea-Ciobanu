@@ -5,11 +5,12 @@
 #include "Shape.h"
 #include "SceneManager.h"
 #include "Recursor.h"
-#include "StarScene.h"
 #include "InverseFilter.h"
 #include "DrawValue.h"
+#include "Logger.h"
 #include <ctime>
 #include <cmath>
+#include "SoundClass.h"
 
 using Core::Input;
 
@@ -24,6 +25,7 @@ Engine::Profiler Engine::Profiler::instance;
 #endif
 
 namespace Game {
+	HWND m_hwnd;
 	const int SCREEN_WIDTH = 1280;
 	const int SCREEN_HEIGHT = 720;
 	const Vector2 * center;
@@ -98,6 +100,15 @@ namespace Game {
 
 		PROFILER.initialize("profiler");
 
+		
+		LOG(Warning, "Warning Message");
+		LOG(Error, "Error Message");
+		LOG(Severe, "Severe Message");
+		LOG(Info, "Info Message");
+		LOG(Warning, "Warning Message");
+		LOG(Error, "Error Message");
+		LOG(Severe, "Severe Message");
+
 		center = new Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 
 		eg = new EnhancedGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -136,6 +147,8 @@ namespace Game {
 		player->registerMoveUp([](){ return Input::IsPressed(87); });
 		player->registerMoveDown([](){ return Input::IsPressed(83); });
 		player->registerFire([](){ return Input::IsPressed(Input::BUTTON_LEFT); });
+
+		LOG(Info, "Game setup completed");
 	}
 
 	bool update(float dt) {
@@ -152,7 +165,7 @@ namespace Game {
 		PROFILER_RECORD("player update")
 
 
-			int oldPos = posManIndex;
+		int oldPos = posManIndex;
 
 		PROFILER_START
 			float spRand = Math::random(0,1);
@@ -188,6 +201,7 @@ namespace Game {
 		PROFILER_RECORD("particles update")
 
 			if (Input::IsPressed(Input::KEY_ESCAPE)) {
+				SAVE_LOG
 				PROFILER.shutdown();
 				return true;
 			}

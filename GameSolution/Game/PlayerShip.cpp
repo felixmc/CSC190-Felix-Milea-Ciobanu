@@ -41,10 +41,6 @@ PlayerShip::PlayerShip(Vector2 startPos)
 	leftPs->minVelocity = Vector2(-2,0);
 	leftPs->minLifeTime = .1f;
 	leftPs->maxLifeTime  = .25f;
-	//leftPs->minRadius = 4;
-	//leftPs->maxRadius = 6;
-	//leftPs->startColor = RGBA(255,230,0,200);
-	//leftPs->endColor = RGBA(255,0,0,255);
 	leftPs->minRadius = 4;
 	leftPs->maxRadius = 6;
 	leftPs->startColor = RGBA(255,230,0,100);

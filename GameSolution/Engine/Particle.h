@@ -30,12 +30,8 @@ namespace Engine {
 		inline void draw(EnhancedGraphics& g) {
 
 			int dim = (radius*2)+1;
-
-			dim;g;
-
 			float* map = Particle::particleMap(radius);
 
-			
 			for (int yi = 0; yi < dim; yi++) {
 				for (int xi = 0; xi < dim; xi++) {
 					float mu = map[(yi * dim) + (xi)];
