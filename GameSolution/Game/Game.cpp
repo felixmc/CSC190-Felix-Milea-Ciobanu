@@ -7,10 +7,10 @@
 #include "Recursor.h"
 #include "InverseFilter.h"
 #include "DrawValue.h"
+#include "NeutronEnemy.h"
 #include "Logger.h"
 #include <ctime>
 #include <cmath>
-#include "SoundClass.h"
 #include "Assert.h"
 
 using Core::Input;
@@ -18,15 +18,14 @@ using Core::Input;
 Engine::Profiler Engine::Profiler::instance;
 
 #if PROFILING_ON
-#define PROFILER_START timer.start();
-#define	PROFILER_RECORD(cat) Engine::Profiler::getInstance().addEntry(cat,timer.elapsed());
+#define PROFILER_START timer.interval();
+#define	PROFILER_RECORD(cat) Engine::Profiler::getInstance().addEntry(cat,timer.intervalElapsed());
 #else
 #define PROFILER_START
 #define PROFILER_RECORD(cat)
 #endif
 
 namespace Game {
-	HWND m_hwnd;
 	const int SCREEN_WIDTH = 1280;
 	const int SCREEN_HEIGHT = 720;
 	const Vector2 * center;
@@ -42,35 +41,20 @@ namespace Game {
 	PositionManager* posManagers[3];
 	int posManIndex = 0;
 
+	GameMenu gameMenu;
+	GameState gameState = Setup;
 	EnhancedGraphics* eg;
 	Timer timer;
+	EventManager eventManager;
 
-	ParticleManager* particleManager;
+	ParticleManager * particleManager;
 	EnemyManager * enemyManager;
 	SceneManager * sceneManager;
 
 	PlayerShip * player;
 	Recursor* rec;
 
-	//const int sides = 10;
-	//const int size = 5;
-
-	//for (int s = size; s > 0; s--) {
-	//	Vector2 shape[sides];
-	//
-	//	for (int i = 0; i < sides; i++) {
-	//		float angle = (3.14f * 2 / sides) * i;
-	//		shape[i] = Vector2(cos(angle)*s, sin(angle)*s);
-	//	}
-	//	
-	//	circles[size - s] = new GameObject(Vector2(100,150), *SHAPE(shape));
-	//	float color = ((255.0f/size) * s);
-	//	circles[size - s]->color = RGBA(255,0,0,color);
-	//	circles[size - s]->draw(g);
-	//	//drawValue(g,20,20*s,s - size);
-	//	circles;
-	//	g;
-	//}
+	int score = 0;
 
 	void drawInstuctions(Core::Graphics& g) {
 		int x2 = 20;
@@ -96,18 +80,14 @@ namespace Game {
 		Engine::drawValue(g, x3, 20, trans);
 	}
 
+	void setupEvents() {
+		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(200,200))); }));
+	}
+
 	void setup() {
 		srand((int)time(0));
 
 		PROFILER_INIT
-
-		LOG(Warning, "Warning Message");
-		LOG(Error, "Error Message");
-		LOG(Severe, "Severe Message");
-		LOG(Info, "Info Message");
-		LOG(Warning, "Warning Message");
-		LOG(Error, "Error Message");
-		LOG(Severe, "Severe Message");
 
 		center = new Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 
@@ -123,7 +103,7 @@ namespace Game {
 		player->color = Color::CYAN2;
 		player->gun->color = Color::YELLOW;
 
-		enemyManager = new EnemyManager(5);
+		enemyManager = new EnemyManager();
 
 		Scene::init();
 
@@ -148,68 +128,97 @@ namespace Game {
 		player->registerMoveDown([](){ return Input::IsPressed(83); });
 		player->registerFire([](){ return Input::IsPressed(Input::BUTTON_LEFT); });
 
+		setupEvents();
+
 		LOG(Info, "Game setup completed");
+		gameState = Playing;
+		timer.start();
 	}
 
+	Interpolation inter(0,360,5,Interpolation::easeInCirc);
+
 	bool update(float dt) {
+
 		PROFILER_FRAME
 
+		inter.update(dt);
+
 		PROFILER_START
-			sceneManager->update(dt);
+		sceneManager->update(dt);
 		rec->update(dt);
 		PROFILER_RECORD("scene update")
 
+		if (gameState == Playing) {
 			PROFILER_START
 			player->update(dt);
-		posManagers[posManIndex]->reposition(*player, dt);
-		PROFILER_RECORD("player update")
+			posManagers[posManIndex]->reposition(*player, dt);
+			PROFILER_RECORD("player update")
 
+			PROFILER_START
 
-		int oldPos = posManIndex;
-
-		PROFILER_START
-			float spRand = Math::random(0,1);
-
-		if (spRand < .25) {
-			enemyManager->spawnPosition = rec->position;
-			enemyManager->baseColor = rec->color;
-		} else if (spRand < .5) {
-			enemyManager->spawnPosition = rec->child->position;
-			enemyManager->baseColor = rec->child->color;
-		} else if (spRand < .75) {
-			enemyManager->spawnPosition = rec->child->child->position;
-			enemyManager->baseColor = rec->child->child->color;
-		} else {
-			enemyManager->spawnPosition = rec->child->child->child->position;
-			enemyManager->baseColor = rec->child->child->child->color;
+			enemyManager->update(dt);
+			PROFILER_RECORD("enemy update")
 		}
 
-		enemyManager->update(dt);
-		PROFILER_RECORD("enemy update")
-
-			// TODO: decouple/abstract this
-			if(Input::IsPressed(49)) posManIndex = 0; // wrap around
+		// TODO: decouple/abstract this
+		if(Input::IsPressed(49)) posManIndex = 0; // wrap around
 		if(Input::IsPressed(50)) posManIndex = 1; // bounce
 		if(Input::IsPressed(51)) posManIndex = 2; // border
 
+		int oldPos = posManIndex;
 		if (oldPos != posManIndex) {
 			posManagers[posManIndex]->reset();
+		}
+
+		if (Input::IsPressed(32)) {
+			gameState = gameState == Paused ? Playing : Paused;
 		}
 
 		PROFILER_START
 			particleManager->update(dt);
 		PROFILER_RECORD("particles update")
 
-			if (Input::IsPressed(Input::KEY_ESCAPE)) {
-				LOG_SAVE
+		if (Input::IsPressed(Input::KEY_ESCAPE)) {
+			LOG_SAVE
 				PROFILER_SAVE
 				return true;
-			}
+		}
 
-			return false;
+		PROFILER_START
+		eventManager.update(dt);
+		PROFILER_RECORD("game events")
+
+		return false;
 	}
 
+	//static Vector2 enemyShape[] = {
+	//	Vector2(0,-2),Vector2(1.2f,0),
+	//	Vector2(0,.8f),Vector2(-1.2f,0)
+	//};
+	//static Vector2 enemyShape[] = {
+	//	Vector2(0,-2.5),Vector2(1,0),Vector2(.5f,1.6f),Vector2(.08f,.4f),
+	//	Vector2(-.08f,.4f),Vector2(-.5f,1.6f),Vector2(-1,0)
+	//};
+
+
+	static Vector2 eshape[] = {
+		Vector2(0,-2.5),Vector2(1,0),Vector2(.5f,1.6f),Vector2(.08f,.4f),
+		Vector2(-.08f,.4f),Vector2(-.5f,1.6f),Vector2(-1,0)
+	};
+	Shape enemyShape = *SHAPE(eshape);
+	//Shape enemyShape = *Shape::generate(50,30);
+	Vector2 enemyPos(200);
+
 	void draw(Core::Graphics& g) {
+		//int c = HSB((int)inter.getValue(),100,100);
+		//eg->setColor(c);
+		//Matrix3 trans = Matrix3::translation(enemyPos)*Matrix3::rotation(1)*Matrix3::scale(8);
+		//for (int i = 0; i < enemyShape.size; i++) {
+		//	Vector3 p1 = trans * Vector3(enemyShape.points[i]);
+		//	Vector3 p2 = trans * Vector3(enemyShape.points[(i + 1) % enemyShape.size]);
+		//	eg->drawLine(p1,p2);
+		//}
+
 		PROFILER_START
 			particleManager->draw(*eg);
 		PROFILER_RECORD("particles draw")
@@ -240,6 +249,9 @@ namespace Game {
 					g.DrawLine(p1.x, p1.y, p2.x, p2.y);
 				}
 			}
+
+			g.DrawString(SCREEN_WIDTH/2, 20, "score: ");
+			drawValue(g, SCREEN_WIDTH/2 + 70, 20, score);
 
 			drawInstuctions(g);
 	}

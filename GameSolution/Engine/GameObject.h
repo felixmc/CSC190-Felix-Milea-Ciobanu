@@ -28,13 +28,7 @@ namespace Engine {
 		}
 
 		inline virtual void draw(EnhancedGraphics& g)  {
-			Matrix3 trans = Matrix3::translation(position)*Matrix3::rotation(rotation)*Matrix3::scale(scale);
-			g.setColor(color);
-			for (int i = 0; i < shape.size; i++) {
-				Vector3 p1 = trans * Vector3(shape.points[i]);
-				Vector3 p2 = trans * Vector3(shape.points[(i + 1) % shape.size]);
-				g.drawLine(p1,p2);
-			}
+			shape.draw(g,color,position,scale,rotation);
 		}
 
 		virtual inline GameObject operator= (const GameObject& other) const {

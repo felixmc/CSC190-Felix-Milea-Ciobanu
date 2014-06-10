@@ -14,20 +14,27 @@ static Vector2 diamond[] = {
 const float EnemyMinionShip::PING_DELAY = .250f;
 const float EnemyMinionShip::SPEED = 200;
 
-EnemyMinionShip::EnemyMinionShip() : Enemy(Vector2(200,200), *SHAPE(diamond)) {
+EnemyMinionShip::EnemyMinionShip(GameObject* target) : Enemy(Vector2(200,200), *SHAPE(diamond)), target(target) {
 	radius = 10;
 	mu = 0;
 	muInc = 0;
-	color = RGB(225+Math::random(-45,40),128+Math::random(-40,40),Math::random(0,50));
+	points = 10;
+
+	hueInter = new Interpolation(-40,50,.8f+Math::random(-.2f,.2f),Interpolation::easeInOutCirc,Engine::Direction::Alternate);
 
 	timer.start();
-	targetPosition = Game::player->position;
+	targetPosition = target->position;
+}
+
+EnemyMinionShip::~EnemyMinionShip() {
+	delete hueInter;
 }
 
 void EnemyMinionShip::update(float dt) {
 	GameObject::update(dt);
 	
-	//rotation += 0.02f;
+	hueInter->update(dt);
+	color = HSB((int)hueInter->getValue()+(target == Game::player ? 0 : -100),100,100);
 	Vector2 diff = (targetPosition - position).perpCCW();
 	rotation = atan2(-diff.y, -diff.x);
 
@@ -35,14 +42,16 @@ void EnemyMinionShip::update(float dt) {
 		muInc = 1;
 		timer.interval();
 
-		if (position.distance(targetPosition) < 120+Math::random(-10,10))
+		if (velocity == Vector2()) {
+			velocity = Vector2(Math::random(-10,10),Math::random(-10,10)).normalize() * (SPEED+Math::random(-50,50));
+		} else if (position.distance(targetPosition) < 80+Math::random(-10,10))
 			if (Math::random(0,10) >= 5)
 				velocity = velocity.perpCCW();
 			else
 				velocity = velocity.perpCW();
 		else {
 			start = position;
-			targetPosition = Game::player->position;
+			targetPosition = target->position;
 
 			Vector2 diff = (targetPosition - start).normalize() * (SPEED+Math::random(-50,50));
 
@@ -50,10 +59,6 @@ void EnemyMinionShip::update(float dt) {
 		}
 	}
 
-
-
-	//position = Vector2(cosInter(start.x,targetPosition.x,mu), cosInter(start.y,targetPosition.y,mu));
-	//mu += (muInc * dt);
 }
 
 inline float EnemyMinionShip::inter(float a, float b, float mu) {

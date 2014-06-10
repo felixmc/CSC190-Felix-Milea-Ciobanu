@@ -6,21 +6,17 @@
 
 using std::vector;
 
-class EnemyManager {
-	Timer timer;
-	float interval;
-	float baseInterval;
-
-	void spawnEnemy();
-
-public:
-	vector<Enemy*> * enemies;
+struct EnemyManager {
+	void spawnMinion(GameObject *);
 	Vector2 spawnPosition;
-	int baseColor;
 
-	EnemyManager(float itv);
+	EnemyManager();
+	void add(Enemy *);
 	void update(float);
 	void draw(EnhancedGraphics&);
+
+//private:
+	vector<Enemy*> * enemies, * queue;
 };
 
 #endif

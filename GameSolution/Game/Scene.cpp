@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "Matrix3.h"
 #include "EngineMath.h"
+#include "Particle.h"
 
 const float Scene::STAR_FREQ = 0.00015f;
 const float Scene::SHINE_FREQ = 0.01f;
@@ -18,7 +19,7 @@ Scene::Scene(float w, float h) : WIDTH(w*1), HEIGHT(h*1), VIEW_WIDTH(w), VIEW_HE
 				} else if (prob <= .9f) {
 					star.color = RGBA(255,255,0,0);
 				} else if (prob <= .95f) {
-					star.color = RGBA(0,128,255,0);				
+					star.color = RGBA(0,188,255,0);				
 				} else if (prob <= 1.0f) {
 					star.color = RGBA(255,50,10,0);				
 				}
@@ -82,6 +83,18 @@ void Scene::draw(Engine::EnhancedGraphics& g) {
 		if (stars->at(i).state == 12) {
 			g.drawBitmap(Vector2(p.x - radius,p.y - radius), radius*2, radius*2, starBitmap);
 		} else {
+			/*int radius = 2;
+			int dim = (radius*2)+1;
+			float* map = Engine::Particle::particleMap(radius);
+
+			for (int yi = 0; yi < dim; yi++) {
+				for (int xi = 0; xi < dim; xi++) {
+					float mu = map[(yi * dim) + (xi)];
+					g.setColor(Engine::Color::interpolate(stars->at(i).color,RGBA(0,0,0,255),mu));
+					g.drawPoint(Vector2(xi + p.x - (radius), yi+p.y - (radius)));
+				}
+			}*/
+
 			g.setColor(stars->at(i).color);
 			g.drawPoint(p);		
 		}

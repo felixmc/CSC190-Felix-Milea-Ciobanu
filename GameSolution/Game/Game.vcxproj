@@ -91,8 +91,10 @@
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="EnemyMinionShip.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameEvent.cpp" />
     <ClCompile Include="LerpEnemy.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NeutronEnemy.cpp" />
     <ClCompile Include="PlayerShip.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Recursor.cpp" />
@@ -104,8 +106,12 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="EnemyMinionShip.h" />
+    <ClInclude Include="EventManager.h" />
+    <ClInclude Include="GameEvent.h" />
+    <ClInclude Include="GameMenu.h" />
     <ClInclude Include="LerpEnemy.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="NeutronEnemy.h" />
     <ClInclude Include="PlayerShip.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="Recursor.h" />

@@ -2,6 +2,7 @@
 #define _ENEMY_MINION_SHIP_H_
 
 #include "Enemy.h"
+#include "Interpolation.h"
 
 struct EnemyMinionShip : public Enemy {
 	static const float PING_DELAY;
@@ -9,8 +10,11 @@ struct EnemyMinionShip : public Enemy {
 	float mu, muInc;
 	Timer timer;
 	Vector2 start, targetPosition;
+	Interpolation * hueInter;
+	GameObject* target;
 
-	EnemyMinionShip();
+	EnemyMinionShip(GameObject* target);
+	~EnemyMinionShip();
 	void update(float);
 	void draw(EnhancedGraphics&);
 	void explode(Projectile&);

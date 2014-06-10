@@ -9,6 +9,7 @@ using namespace Engine;
 struct Enemy : public GameObject {
 	float radius;
 	bool isDead;
+	int points;
 
 	Enemy(const Vector2 sp, const Shape& sh) : GameObject(sp, sh) {
 		isDead = false;

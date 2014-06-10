@@ -31,6 +31,8 @@ void Projectile::update(float dt) {
 		if (target->position.distance(position) <= target->radius) {
 			detonate();
 			target->explode(*this);
+			if (target->isDead)
+				Game::score += target->points;
 			break;
 		}
 	}
