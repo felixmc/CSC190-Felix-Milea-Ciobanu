@@ -60,6 +60,8 @@ PlayerShip::PlayerShip(Vector2 startPos)
 
 	Game::particleManager->add(leftPs);
 	Game::particleManager->add(rightPs);
+
+	hp = 10;
 }
 
 void PlayerShip::update(float dt) {
@@ -158,7 +160,10 @@ inline void PlayerShip::move(float dt) {
 
 void PlayerShip::hit(EnemyProjectile& p) {
 	p;
-	isDead = true;
+	hp--;
+
+	if (hp < 1)
+		isDead = true;
 
 	ExplosionParticleSystem * ps = new ExplosionParticleSystem(250);
 	ps->position = position;
@@ -169,8 +174,8 @@ void PlayerShip::hit(EnemyProjectile& p) {
 	ps->maxLifeTime  = .75f;
 	ps->minRadius = 1;
 	ps->maxRadius = 2;
-	ps->startColor = AFilter(color,200);
-	ps->endColor = RGBA(0,0,0,0);
+	ps->startColor = AFilter(color,50);
+	ps->endColor = RGBA(0,0,0,255);
 
 	Game::particleManager->add(ps);
 }

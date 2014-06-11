@@ -150,10 +150,10 @@ namespace Game {
 			int oldPos = posManIndex;
 			if (oldPos != posManIndex) posManagers[posManIndex]->reset();
 
-			if (player->isDead) gameState = Ended;
+			if (player->isDead || enemyManager->enemies->size() == 0) gameState = Ended;
 		}
 
-		if (Input::IsPressed(32)) gameState = gameState == Paused ? Playing : Paused;
+		//if (Input::IsPressed(32)) gameState = gameState == Paused ? Playing : Paused;
 
 		if (Input::IsPressed(Input::KEY_ESCAPE)) {
 			PROFILER_SAVE
@@ -217,10 +217,27 @@ namespace Game {
 			g.DrawString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, "Space Game 3000");
 			g.SetColor(RGB(255,255,0));
 			g.DrawString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+20, "LOADING...");
-		} else if (gameState == Playing) {
-			PROFILER_START
-			particleManager->draw(*eg);
-			PROFILER_RECORD("particles draw")
+		} else if (gameState == Ended) {
+			if (player->isDead) {
+				g.SetColor(RGB(255,0,0));
+				g.DrawString(SCREEN_WIDTH/2-30, 150, "GAME OVER!");
+			} else {
+				g.SetColor(Color::CYAN);
+				g.DrawString(SCREEN_WIDTH/2-30, 150, "YOU WIN!");			
+			}
+		}
+		
+		
+		if (gameState != Loading) {
+			// TODO: decouple/abstract this
+			if(posManIndex == 2) { // position manager set to border
+				g.SetColor(RGB(255,255,0));
+				for (int i = 0; i < boundary.size; i++) {
+					Vector2 p1 = boundary.points[i];
+					Vector2 p2 = boundary.points[(i + 1) % boundary.size];
+					g.DrawLine(p1.x, p1.y, p2.x, p2.y);
+				}
+			}
 
 			PROFILER_START
 			sceneManager->draw(*eg);
@@ -236,30 +253,27 @@ namespace Game {
 			enemyManager->draw(*eg);
 			PROFILER_RECORD("enemies draw")
 
-			// TODO: decouple/abstract this
-			if(posManIndex == 2) { // position manager set to border
-				g.SetColor(RGB(255,255,0));
-				for (int i = 0; i < boundary.size; i++) {
-					Vector2 p1 = boundary.points[i];
-					Vector2 p2 = boundary.points[(i + 1) % boundary.size];
-					g.DrawLine(p1.x, p1.y, p2.x, p2.y);
-				}
-			}
+			PROFILER_START
+			particleManager->draw(*eg);
+			PROFILER_RECORD("particles draw")
 
-			g.SetColor(RGB(255,255,255));
-			g.DrawString(SCREEN_WIDTH/2 - 50, 20, "score: ");
-			g.SetColor(RGB(255,255,0));
-			drawValue(g, SCREEN_WIDTH/2 + 10, 20, score);
-		}
-
-		if (gameState != Loading) {
 			PROFILER_START
 			eg->draw(g);
 			PROFILER_RECORD("frame draw")
 			drawDebug(g);
-		}
 
-		drawValue(g, 300,300, (int)enemyManager->projectiles->size());
+			//if (gameState == Playing) {
+				g.SetColor(RGB(255,255,255));
+				g.DrawString(SCREEN_WIDTH/2 - 70, 20, "score: ");
+				g.SetColor(RGB(255,255,0));
+				drawValue(g, SCREEN_WIDTH/2 - 10, 20, score);
+
+				g.SetColor(RGB(255,255,255));
+				g.DrawString(SCREEN_WIDTH/2 + 50, 20, "hp: ");
+				g.SetColor(RGB(255,255,0));
+				drawValue(g, SCREEN_WIDTH/2 + 90, 20, player->hp);
+			//}
+		}
 
 		drawInstuctions(g);
 	}

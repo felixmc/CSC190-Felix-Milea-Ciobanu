@@ -38,7 +38,7 @@ void EnemyProjectile::update(float dt) {
 
 	if (Game::player->position.distance(position) <= 10) {
 		detonate();
-		//Game::player->hit(*this);
+		Game::player->hit(*this);
 	}
 }
 

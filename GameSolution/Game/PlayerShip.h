@@ -16,6 +16,7 @@ struct PlayerShip : GameObject {
 	ParticleSystem * leftPs, * rightPs;
 	std::vector<Projectile*> projectiles;
 	bool isDead;
+	int hp;
 
 	PlayerShip(Vector2);
 
