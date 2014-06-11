@@ -12,15 +12,10 @@ Projectile::Projectile(Vector2 p, float rot) : GameObject(p, *projShape) {
 	rotation = rot;
 	isDetonated = false;
 	velocity = Vector2(sin(rot), -cos(rot)) *PROJ_V;
-	//tail = new ParticleSystem(10);
-	//tail->minLifeTime = .05f;
-	//tail->maxLifeTime  = .1f;
-	//tail->minRadius = 3;
-	//tail->maxRadius = 4;
-	//tail->startColor = RGBA(255,200,0,200);
-	//tail->endColor = RGBA(255,0,0,255);
+}
 
-	//Game::particleManager->add(tail);
+EnemyProjectile::EnemyProjectile(Vector2 p, float rot) : Projectile(p, rot) {
+	color = RGB(255,170,0);
 }
 
 void Projectile::update(float dt) {
@@ -36,12 +31,15 @@ void Projectile::update(float dt) {
 			break;
 		}
 	}
+}
 
-	//tail->position = Matrix3::translation(position)*Matrix3::rotation(rotation)*Vector2(0,2);
-	//tail->minVelocity = Matrix3::rotation(rotation)*(Vector2(-1,0));
-	//tail->maxVelocity = velocity + Matrix3::rotation(rotation)*(Vector2(1,1));
-	//tail->minPositionOffset = Matrix3::rotation(rotation)*Vector2(0,0);
-	//tail->maxPositionOffset = Matrix3::rotation(rotation)*Vector2(0,1);
+void EnemyProjectile::update(float dt) {
+	GameObject::update(dt);
+
+	if (Game::player->position.distance(position) <= 10) {
+		detonate();
+		//Game::player->hit(*this);
+	}
 }
 
 bool Projectile::isDead() const {
@@ -55,5 +53,5 @@ void Projectile::detonate() {
 }
 
 Projectile::~Projectile() {
-	/*tail->dead = true;*/
+
 }

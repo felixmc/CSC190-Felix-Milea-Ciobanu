@@ -14,12 +14,17 @@ struct Projectile : public GameObject {
 	Projectile(Vector2, float);
 	~Projectile();
 
-	void update(float);
+	virtual void update(float);
 	void detonate();
 	bool isDead() const;
 
 private:
 	bool isDetonated;
+};
+
+struct EnemyProjectile : public Projectile {
+	EnemyProjectile(Vector2, float);
+	void update(float);
 };
 
 #endif

@@ -56,7 +56,7 @@ namespace Game {
 	void setupEvents() {
 		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(200,200))); }));
 		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(SCREEN_WIDTH-200,200))); }));
-		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(SCREEN_WIDTH/2,SCREEN_HEIGHT-60))); }));
+		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(SCREEN_WIDTH/2,SCREEN_HEIGHT-70))); }));
 	}
 
 	void setup() {
@@ -131,10 +131,12 @@ namespace Game {
 			PROFILER_RECORD("player update")
 
 			PROFILER_START
-
 			enemyManager->update(dt);
 			PROFILER_RECORD("enemy update")
 
+			PROFILER_START
+			particleManager->update(dt);
+			PROFILER_RECORD("particles update")
 
 			PROFILER_START
 			eventManager.update(dt);
@@ -147,13 +149,11 @@ namespace Game {
 
 			int oldPos = posManIndex;
 			if (oldPos != posManIndex) posManagers[posManIndex]->reset();
+
+			if (player->isDead) gameState = Ended;
 		}
 
 		if (Input::IsPressed(32)) gameState = gameState == Paused ? Playing : Paused;
-
-		PROFILER_START
-		particleManager->update(dt);
-		PROFILER_RECORD("particles update")
 
 		if (Input::IsPressed(Input::KEY_ESCAPE)) {
 			PROFILER_SAVE
@@ -185,7 +185,7 @@ namespace Game {
 	void drawDebug(Core::Graphics& g) {
 		g.SetColor(Color::GREEN);
 		Matrix3 trans = Matrix3::translation(player->position)*Matrix3::rotation(player->rotation);
-		Engine::drawValue(g, 30, SCREEN_HEIGHT-100, trans);
+		Engine::drawValue(g, 20, SCREEN_HEIGHT-80, trans);
 	}
 
 	void drawInstuctions(Core::Graphics& g) {
@@ -205,6 +205,9 @@ namespace Game {
 		g.DrawString(x2, 20, "Change borders");
 		g.DrawString(x2, 40, "Control ship");
 		g.DrawString(x2, 70, "Use cursor to aim and left click to fire.");
+		g.SetColor(Color::CYAN);
+		g.DrawString(x2, 90, "Destroy all enemies to win.");
+		g.DrawString(x2, 110, "Avoid enemy fire.");
 	}
 
 	void draw(Core::Graphics& g) {
@@ -244,9 +247,9 @@ namespace Game {
 			}
 
 			g.SetColor(RGB(255,255,255));
-			g.DrawString(SCREEN_WIDTH/2, 30, "score: ");
+			g.DrawString(SCREEN_WIDTH/2 - 50, 20, "score: ");
 			g.SetColor(RGB(255,255,0));
-			drawValue(g, SCREEN_WIDTH/2 + 60, 30, score);
+			drawValue(g, SCREEN_WIDTH/2 + 10, 20, score);
 		}
 
 		if (gameState != Loading) {
@@ -255,6 +258,8 @@ namespace Game {
 			PROFILER_RECORD("frame draw")
 			drawDebug(g);
 		}
+
+		drawValue(g, 300,300, (int)enemyManager->projectiles->size());
 
 		drawInstuctions(g);
 	}

@@ -1,10 +1,13 @@
 #include "NeutronEnemy.h"
 
 const float NeutronEnemy::MINION_DELAY = 0.5f;
+const float NeutronEnemy::FIRE_DELAY = .5f;
+const float NeutronEnemy::FIRE_CHANCE = 1;
 
 NeutronEnemy::NeutronEnemy(GameObject* target, Vector2 pos) : target(target), Enemy(pos, *Shape::generate(20,15)) {
 	shrink = false;
 	timer.start();
+	fireTimer.start();
 	points = 300;
 	radius = 15;
 	color = RGB(230,0,255);
@@ -37,9 +40,25 @@ void NeutronEnemy::update(float dt) {
 				minions.at(i)->target = target;
 			}
 			isDead = true;
-		} else
+		} else {
 			scale -= .08f;
+			while (minions.size() < 30) {
+				EnemyMinionShip* minion = new EnemyMinionShip(this);
+				minion->position = position;
+				minions.push_back(minion);
+				Game::enemyManager->queue->push_back(minion);
+				timer.interval();
+			}
+		}
 	} else{
+		if (Game::timer.elapsed() > 3 && fireTimer.intervalElapsed() > FIRE_DELAY && Math::random(0,100) < FIRE_CHANCE) {
+			Vector2 diff = (Game::player->position - position).perpCW();
+			float rotation = atan2(-diff.y, -diff.x);
+			EnemyProjectile* p = new EnemyProjectile(position, rotation);
+			Game::enemyManager->projectiles->push_back(p);
+			fireTimer.interval();
+		}
+
 		scaleInter->update(dt);
 		scale = scaleInter->getValue();
 

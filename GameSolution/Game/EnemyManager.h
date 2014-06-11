@@ -7,7 +7,7 @@
 using std::vector;
 
 struct EnemyManager {
-	void spawnMinion(GameObject *);
+	void spawnMinion(GameObject *, Vector2&);
 	Vector2 spawnPosition;
 
 	EnemyManager();
@@ -17,6 +17,7 @@ struct EnemyManager {
 
 //private:
 	vector<Enemy*> * enemies, * queue;
+	vector<EnemyProjectile*> * projectiles;
 };
 
 #endif

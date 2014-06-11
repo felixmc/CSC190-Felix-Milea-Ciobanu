@@ -104,14 +104,14 @@ namespace Engine {
 
 
 			g.SetColor(RGB(255,255,255));
-			g.DrawString(WIDTH - 80, 25,std::to_string(frames).c_str());
-			g.DrawString(WIDTH - 80, 45,std::to_string((int)(time * 1000)).c_str());
-			g.DrawString(WIDTH - 80, 65,std::to_string(count).c_str());
+			g.DrawString(WIDTH - 120, 20,std::to_string(frames).c_str());
+			g.DrawString(WIDTH - 120, 40,std::to_string((int)(time * 1000)).c_str());
+			g.DrawString(WIDTH - 120, 60,std::to_string(count).c_str());
 
 			g.SetColor(RGB(255,155,0));
-			g.DrawString(WIDTH - 40, 25,"fps");
-			g.DrawString(WIDTH - 40, 45,"ms/frame");
-			g.DrawString(WIDTH - 40, 65,"px/frame");
+			g.DrawString(WIDTH - 80, 20,"fps");
+			g.DrawString(WIDTH - 80, 40,"ms/frame");
+			g.DrawString(WIDTH - 80, 60,"px/frame");
 
 			g.SetColor(RGB(255,255,255));
 			resetChanges();

@@ -7,12 +7,13 @@ struct NeutronEnemy : Enemy {
 
 	GameObject* target;
 	bool shrink;
-	Timer timer;
+	Timer timer, fireTimer;
 	vector<EnemyMinionShip*> minions;
 	Interpolation * hueInter, * posInter, * scaleInter;
 	int hp;
 
 	static const float MINION_DELAY;
+	static const float FIRE_DELAY, FIRE_CHANCE;
 
 	NeutronEnemy(GameObject* target, Vector2 pos);
 	void update(float);

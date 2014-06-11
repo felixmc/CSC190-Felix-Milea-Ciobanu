@@ -15,6 +15,7 @@ struct PlayerShip : GameObject {
 	GameObject* gun;
 	ParticleSystem * leftPs, * rightPs;
 	std::vector<Projectile*> projectiles;
+	bool isDead;
 
 	PlayerShip(Vector2);
 
@@ -23,6 +24,8 @@ struct PlayerShip : GameObject {
 	void registerMoveUp(ShipController);
 	void registerMoveDown(ShipController);
 	void registerFire(ShipController);
+
+	void hit(EnemyProjectile&);
 
 	void update(float);
 	void draw(EnhancedGraphics&);

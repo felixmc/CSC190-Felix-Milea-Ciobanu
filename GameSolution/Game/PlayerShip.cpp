@@ -36,6 +36,7 @@ PlayerShip::PlayerShip(Vector2 startPos)
 	gun = new GameObject(startPos, *SHAPE(gunShape));
 	gun->color = Color::YELLOW;
 	lastFired = 0;
+	isDead = false;
 
 	leftPs = new ParticleSystem(50);
 	leftPs->minVelocity = Vector2(-2,0);
@@ -153,6 +154,25 @@ inline void PlayerShip::move(float dt) {
 		velocity.x = velocity.x > 0 ? max(0, velocity.x - FRICTION*dt) : min(0, velocity.x + FRICTION*dt);
 		velocity.y = velocity.y > 0 ? max(0, velocity.y - FRICTION*dt) : min(0, velocity.y + FRICTION*dt);
 	}
+}
+
+void PlayerShip::hit(EnemyProjectile& p) {
+	p;
+	isDead = true;
+
+	ExplosionParticleSystem * ps = new ExplosionParticleSystem(250);
+	ps->position = position;
+	ps->radial = false;
+	ps->minVelocity = Vector2(-70);
+	ps->maxVelocity = Vector2(70);
+	ps->minLifeTime = .25f;
+	ps->maxLifeTime  = .75f;
+	ps->minRadius = 1;
+	ps->maxRadius = 2;
+	ps->startColor = AFilter(color,200);
+	ps->endColor = RGBA(0,0,0,0);
+
+	Game::particleManager->add(ps);
 }
 
 void PlayerShip::registerRotateLeft(ShipController c) { rotateLeftController = c; }
