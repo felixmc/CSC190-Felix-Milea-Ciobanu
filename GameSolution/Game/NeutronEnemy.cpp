@@ -89,8 +89,8 @@ bool NeutronEnemy::explode(Projectile& p) {
 	ps->maxLifeTime  = .5f;
 	ps->minRadius = 1;
 	ps->maxRadius = 2;
-	ps->startColor = AFilter(p.color,200);
-	ps->endColor = RGBA(0,0,0,0);
+	ps->startColor = AFilter(p.color,180);
+	ps->endColor = RGBA(0,0,0,255);
 
 	Game::particleManager->add(ps);
 

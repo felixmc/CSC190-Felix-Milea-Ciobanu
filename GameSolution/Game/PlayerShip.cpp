@@ -168,13 +168,13 @@ void PlayerShip::hit(EnemyProjectile& p) {
 	ExplosionParticleSystem * ps = new ExplosionParticleSystem(250);
 	ps->position = position;
 	ps->radial = false;
-	ps->minVelocity = Vector2(-70);
-	ps->maxVelocity = Vector2(70);
+	ps->minVelocity = Vector2(-100);
+	ps->maxVelocity = Vector2(100);
 	ps->minLifeTime = .25f;
-	ps->maxLifeTime  = .75f;
+	ps->maxLifeTime  = .85f;
 	ps->minRadius = 1;
 	ps->maxRadius = 2;
-	ps->startColor = AFilter(color,50);
+	ps->startColor = AFilter(color,100);
 	ps->endColor = RGBA(0,0,0,255);
 
 	Game::particleManager->add(ps);

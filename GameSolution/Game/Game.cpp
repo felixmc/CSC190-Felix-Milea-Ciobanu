@@ -206,8 +206,8 @@ namespace Game {
 		g.DrawString(x2, 40, "Control ship");
 		g.DrawString(x2, 70, "Use cursor to aim and left click to fire.");
 		g.SetColor(Color::CYAN);
-		g.DrawString(x2, 90, "Destroy all enemies to win.");
-		g.DrawString(x2, 110, "Avoid enemy fire.");
+		g.DrawString(x2, 110, "Destroy all enemies to win.");
+		g.DrawString(x2, 90, "Avoid enemy fire.");
 	}
 
 	void draw(Core::Graphics& g) {
@@ -220,10 +220,10 @@ namespace Game {
 		} else if (gameState == Ended) {
 			if (player->isDead) {
 				g.SetColor(RGB(255,0,0));
-				g.DrawString(SCREEN_WIDTH/2-30, 150, "GAME OVER!");
+				g.DrawString(SCREEN_WIDTH/2-25, 150, "GAME OVER!");
 			} else {
 				g.SetColor(Color::CYAN);
-				g.DrawString(SCREEN_WIDTH/2-30, 150, "YOU WIN!");			
+				g.DrawString(SCREEN_WIDTH/2-25, 150, "YOU WIN!");			
 			}
 		}
 		
