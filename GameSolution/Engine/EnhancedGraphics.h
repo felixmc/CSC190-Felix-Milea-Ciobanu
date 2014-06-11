@@ -9,6 +9,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include "Assert.h"
 
 using Core::Graphics;
 using std::vector;
@@ -66,7 +67,8 @@ namespace Engine {
 			bitmapBuffer = new int[WIDTH * HEIGHT];
 			curColor = RGB(255,255,255);
 			timer.start();
-			//changes = new vector<Vector2>();
+			LOG(Info, "Profiler initialized")
+				//changes = new vector<Vector2>();
 		}
 
 		inline void draw(Graphics& g) {
@@ -102,14 +104,14 @@ namespace Engine {
 
 
 			g.SetColor(RGB(255,255,255));
-			g.DrawString(20,HEIGHT - 65,std::to_string(frames).c_str());
-			g.DrawString(20,HEIGHT - 45,std::to_string((int)(time * 1000)).c_str());
-			g.DrawString(20,HEIGHT - 25,std::to_string(count).c_str());
+			g.DrawString(WIDTH - 80, 25,std::to_string(frames).c_str());
+			g.DrawString(WIDTH - 80, 45,std::to_string((int)(time * 1000)).c_str());
+			g.DrawString(WIDTH - 80, 65,std::to_string(count).c_str());
 
 			g.SetColor(RGB(255,155,0));
-			g.DrawString(60,HEIGHT - 65,"fps");
-			g.DrawString(60,HEIGHT - 45,"ms/frame");
-			g.DrawString(60,HEIGHT - 25,"px/frame");
+			g.DrawString(WIDTH - 40, 25,"fps");
+			g.DrawString(WIDTH - 40, 45,"ms/frame");
+			g.DrawString(WIDTH - 40, 65,"px/frame");
 
 			g.SetColor(RGB(255,255,255));
 			resetChanges();
@@ -125,25 +127,23 @@ namespace Engine {
 		}
 
 		inline void drawPoint(const Vector2& p) {
-			if (isOnScreen(p)) {
-				float a = (255 - GetAValue(curColor)) / 255.0f;
+			float a = (255 - GetAValue(curColor)) / 255.0f;
 
-				if (a != 0) {
-					int coor = ((int)p.y * WIDTH) + (int)p.x;
-					int c = bitmapBuffer[coor];
-					float na = 1 - a;
+			if (a != 0 && isOnScreen(p)) {
+				int coor = ((int)p.y * WIDTH) + (int)p.x;
+				int c = bitmapBuffer[coor];
+				float na = 1 - a;
 
-					bitmapBuffer[coor] = RGB(
-						min((GetRValue(c) * na) + (GetRValue(curColor) * a),255),
-						min((GetGValue(c) * na) + (GetGValue(curColor) * a),255),
-						min((GetBValue(c) * na) + (GetBValue(curColor) * a),255)
-						);
+				bitmapBuffer[coor] = RGB(
+					min((GetRValue(c) * na) + (GetRValue(curColor) * a),255),
+					min((GetGValue(c) * na) + (GetGValue(curColor) * a),255),
+					min((GetBValue(c) * na) + (GetBValue(curColor) * a),255)
+					);
 
-					//if (c == 0)
-						//changes->push_back(p);
-					
-					change();
-				}
+				//if (c == 0)
+				//changes->push_back(p);
+
+				change();
 			}
 		}
 

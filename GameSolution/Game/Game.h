@@ -10,7 +10,7 @@
 #include "EventManager.h"
 
 namespace Game {
-	enum GameState { Setup, Playing, Paused, Ended };
+	enum GameState { Loading, Playing, Paused, Ended };
 
 	extern const int SCREEN_WIDTH;
 	extern const int SCREEN_HEIGHT;

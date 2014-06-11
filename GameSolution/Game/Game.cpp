@@ -8,14 +8,11 @@
 #include "InverseFilter.h"
 #include "DrawValue.h"
 #include "NeutronEnemy.h"
-#include "Logger.h"
 #include <ctime>
 #include <cmath>
-#include "Assert.h"
+#include "Logger.h"
 
 using Core::Input;
-
-Engine::Profiler Engine::Profiler::instance;
 
 #if PROFILING_ON
 #define PROFILER_START timer.interval();
@@ -42,7 +39,7 @@ namespace Game {
 	int posManIndex = 0;
 
 	GameMenu gameMenu;
-	GameState gameState = Setup;
+	GameState gameState = Loading;
 	EnhancedGraphics* eg;
 	Timer timer;
 	EventManager eventManager;
@@ -55,30 +52,6 @@ namespace Game {
 	Recursor* rec;
 
 	int score = 0;
-
-	void drawInstuctions(Core::Graphics& g) {
-		int x2 = 20;
-		int x = 150;
-		int x3 = SCREEN_WIDTH - 280;
-		g.SetTextBackgroundMode(Core::Graphics::TEXTBKGMODE::Transparent);
-
-		g.SetColor(Color::WHITE);
-		g.DrawString(x, 20, "[ ] [ ] [ ]");
-		g.DrawString(x, 40, "[ ] [ ] [ ] [ ]");
-
-		g.SetColor(Color::CYAN);
-		g.DrawString(x, 20, " 1   2   3");
-		g.DrawString(x, 40, " w   a   s   d");
-
-		g.SetColor(Color::YELLOW);
-		g.DrawString(x2, 20, "Change borders");
-		g.DrawString(x2, 40, "Control ship");
-		g.DrawString(x2, 70, "Use cursor to aim and left click to fire.");
-
-		g.SetColor(Color::GREEN);
-		Matrix3 trans = Matrix3::translation(player->position)*Matrix3::rotation(player->rotation);
-		Engine::drawValue(g, x3, 20, trans);
-	}
 
 	void setupEvents() {
 		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(200,200))); }));
@@ -133,24 +106,25 @@ namespace Game {
 		setupEvents();
 
 		LOG(Info, "Game setup completed");
-		gameState = Playing;
 		timer.start();
 	}
-
-	Interpolation inter(0,360,5,Interpolation::easeInCirc);
 
 	bool update(float dt) {
 
 		PROFILER_FRAME
 
-		inter.update(dt);
-
 		PROFILER_START
 		sceneManager->update(dt);
-		rec->update(dt);
 		PROFILER_RECORD("scene update")
 
-		if (gameState == Playing) {
+		if (gameState == Loading) {
+			if(timer.elapsed() >= 2) {
+				gameState = Playing;
+				timer.start();
+			}
+		} else if (gameState == Playing) {
+			rec->update(dt);
+
 			PROFILER_START
 			player->update(dt);
 			posManagers[posManIndex]->reposition(*player, dt);
@@ -160,35 +134,32 @@ namespace Game {
 
 			enemyManager->update(dt);
 			PROFILER_RECORD("enemy update")
+
+
+			PROFILER_START
+			eventManager.update(dt);
+			PROFILER_RECORD("game events")
+
+			// TODO: decouple/abstract this
+			if(Input::IsPressed(49)) posManIndex = 0; // wrap around
+			if(Input::IsPressed(50)) posManIndex = 1; // bounce
+			if(Input::IsPressed(51)) posManIndex = 2; // border
+
+			int oldPos = posManIndex;
+			if (oldPos != posManIndex) posManagers[posManIndex]->reset();
 		}
 
-		// TODO: decouple/abstract this
-		if(Input::IsPressed(49)) posManIndex = 0; // wrap around
-		if(Input::IsPressed(50)) posManIndex = 1; // bounce
-		if(Input::IsPressed(51)) posManIndex = 2; // border
-
-		int oldPos = posManIndex;
-		if (oldPos != posManIndex) {
-			posManagers[posManIndex]->reset();
-		}
-
-		if (Input::IsPressed(32)) {
-			gameState = gameState == Paused ? Playing : Paused;
-		}
+		if (Input::IsPressed(32)) gameState = gameState == Paused ? Playing : Paused;
 
 		PROFILER_START
-			particleManager->update(dt);
+		particleManager->update(dt);
 		PROFILER_RECORD("particles update")
 
 		if (Input::IsPressed(Input::KEY_ESCAPE)) {
+			PROFILER_SAVE
 			LOG_SAVE
-				PROFILER_SAVE
-				return true;
+			return true;
 		}
-
-		PROFILER_START
-		eventManager.update(dt);
-		PROFILER_RECORD("game events")
 
 		return false;
 	}
@@ -203,44 +174,64 @@ namespace Game {
 	//};
 
 
-	static Vector2 eshape[] = {
-		Vector2(0,-2.5),Vector2(1,0),Vector2(.5f,1.6f),Vector2(.08f,.4f),
-		Vector2(-.08f,.4f),Vector2(-.5f,1.6f),Vector2(-1,0)
-	};
-	Shape enemyShape = *SHAPE(eshape);
+	//static Vector2 eshape[] = {
+	//	Vector2(0,-2.5),Vector2(1,0),Vector2(.5f,1.6f),Vector2(.08f,.4f),
+	//	Vector2(-.08f,.4f),Vector2(-.5f,1.6f),Vector2(-1,0)
+	//};
+	//Shape enemyShape = *SHAPE(eshape);
 	//Shape enemyShape = *Shape::generate(50,30);
-	Vector2 enemyPos(200);
+	//Vector2 enemyPos(200);
+
+	void drawDebug(Core::Graphics& g) {
+		g.SetColor(Color::GREEN);
+		Matrix3 trans = Matrix3::translation(player->position)*Matrix3::rotation(player->rotation);
+		Engine::drawValue(g, 30, SCREEN_HEIGHT-100, trans);
+	}
+
+	void drawInstuctions(Core::Graphics& g) {
+		int x2 = 20;
+		int x = 150;
+		g.SetTextBackgroundMode(Core::Graphics::TEXTBKGMODE::Transparent);
+
+		g.SetColor(Color::WHITE);
+		g.DrawString(x, 20, "[ ] [ ] [ ]");
+		g.DrawString(x, 40, "[ ] [ ] [ ] [ ]");
+
+		g.SetColor(Color::CYAN);
+		g.DrawString(x, 20, " 1   2   3");
+		g.DrawString(x, 40, " w   a   s   d");
+
+		g.SetColor(Color::YELLOW);
+		g.DrawString(x2, 20, "Change borders");
+		g.DrawString(x2, 40, "Control ship");
+		g.DrawString(x2, 70, "Use cursor to aim and left click to fire.");
+	}
 
 	void draw(Core::Graphics& g) {
-		//int c = HSB((int)inter.getValue(),100,100);
-		//eg->setColor(c);
-		//Matrix3 trans = Matrix3::translation(enemyPos)*Matrix3::rotation(1)*Matrix3::scale(8);
-		//for (int i = 0; i < enemyShape.size; i++) {
-		//	Vector3 p1 = trans * Vector3(enemyShape.points[i]);
-		//	Vector3 p2 = trans * Vector3(enemyShape.points[(i + 1) % enemyShape.size]);
-		//	eg->drawLine(p1,p2);
-		//}
 
-		PROFILER_START
+		if (gameState == Loading) {
+			g.SetColor(RGB(255,0,0));
+			g.DrawString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, "Space Game 3000");
+			g.SetColor(RGB(255,255,0));
+			g.DrawString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+20, "LOADING...");
+		} else if (gameState == Playing) {
+			PROFILER_START
 			particleManager->draw(*eg);
-		PROFILER_RECORD("particles draw")
+			PROFILER_RECORD("particles draw")
 
 			PROFILER_START
 			sceneManager->draw(*eg);
-		rec->draw(*eg);
-		PROFILER_RECORD("scene draw")
+			PROFILER_RECORD("scene draw")
+
+			rec->draw(*eg);
 
 			PROFILER_START
 			player->draw(*eg);
-		PROFILER_RECORD("player draw")
+			PROFILER_RECORD("player draw")
 
 			PROFILER_START
 			enemyManager->draw(*eg);
-		PROFILER_RECORD("enemies draw")
-
-			PROFILER_START
-			eg->draw(g);
-		PROFILER_RECORD("frame draw")
+			PROFILER_RECORD("enemies draw")
 
 			// TODO: decouple/abstract this
 			if(posManIndex == 2) { // position manager set to border
@@ -252,10 +243,22 @@ namespace Game {
 				}
 			}
 
-			g.DrawString(SCREEN_WIDTH/2, 20, "score: ");
-			drawValue(g, SCREEN_WIDTH/2 + 70, 20, score);
+			g.SetColor(RGB(255,255,255));
+			g.DrawString(SCREEN_WIDTH/2, 30, "score: ");
+			g.SetColor(RGB(255,255,0));
+			drawValue(g, SCREEN_WIDTH/2 + 60, 30, score);
+		}
 
-			drawInstuctions(g);
+		if (gameState != Loading) {
+			PROFILER_START
+			eg->draw(g);
+			PROFILER_RECORD("frame draw")
+			drawDebug(g);
+		}
+
+		drawInstuctions(g);
 	}
+
+
 
 }

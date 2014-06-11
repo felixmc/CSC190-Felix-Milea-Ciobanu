@@ -1,13 +1,14 @@
 #ifndef _ENGINE_PROFILER_H_
 #define _ENGINE_PROFILER_H_
 
+#include "Logger.h"
 #include <fstream>
 #include <ctime>
 #include <cstring>
 
 namespace Engine {
 
-	class Profiler {
+	class ENGINE_SHARED Profiler {
 		Profiler() {}
 		Profiler(const Profiler&);
 		Profiler& operator=(const Profiler&);
@@ -19,14 +20,12 @@ namespace Engine {
 		unsigned int categoryIndex;
 		unsigned int numUsedCategories;
 
-		std::ofstream fileStream;
-
 		struct ProfileCategory {
 			const char* name;
 			float samples[MAX_FRAME_SAMPLES];
 		} categories[MAX_PROFILE_CATEGORIES];
 
-		void writeFrame(unsigned int frame) {
+		void writeFrame(std::ofstream& fileStream, unsigned int frame) {
 			for (unsigned int cat = 0; cat < numUsedCategories; cat++) {
 				fileStream << categories[cat].samples[frame];
 				fileStream << (cat + 1 < numUsedCategories ? ',' : '\n');
@@ -67,6 +66,7 @@ namespace Engine {
 			frameIndex = -1;
 			categoryIndex = 0;
 			numUsedCategories = 0;
+		 LOG(Info, "Profiler initialized")
 		}
 
 		void shutdown() {
@@ -78,7 +78,7 @@ namespace Engine {
 			localtime_s (&timeinfo,&rawtime);
 			strftime (buffer,80,"data/profiler/%m-%d-%Y %H-%M-%S.csv",&timeinfo);
 
-			fileStream.open(buffer);
+			std::ofstream fileStream(buffer);
 
 			for (unsigned int i = 0; i < numUsedCategories; i++) {
 				fileStream << categories[i].name;
@@ -92,11 +92,11 @@ namespace Engine {
 				endIndex = frameIndex % MAX_FRAME_SAMPLES;
 				startIndex = (endIndex + 1) % MAX_FRAME_SAMPLES;
 				while (startIndex != endIndex) {
-					writeFrame(startIndex);
+					writeFrame(fileStream,startIndex);
 					startIndex = (startIndex + 1) % MAX_FRAME_SAMPLES;
 				}
 				if (categoryIndex == numUsedCategories)
-					writeFrame(startIndex);
+					writeFrame(fileStream,startIndex);
 			} else {
 				unsigned int numActualFrames = frameIndex;
 				if (categoryIndex == numUsedCategories)
@@ -104,10 +104,11 @@ namespace Engine {
 				startIndex = 0;
 				endIndex = numActualFrames;
 				while (startIndex < endIndex)
-					writeFrame(startIndex++);
+					writeFrame(fileStream,startIndex++);
 			}
 
 			fileStream.close();
+			LOG(Info, "Profiler successfully shutdown")
 		}
 	};
 

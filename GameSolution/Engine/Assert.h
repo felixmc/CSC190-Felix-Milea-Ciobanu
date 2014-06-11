@@ -14,9 +14,9 @@
 
 namespace Engine {
 
-	namespace Assert {
+	struct ENGINE_SHARED Assert {
 
-		extern void makeAssert(bool condition, char* msg, char* file, int line) {
+		static void makeAssert(bool condition, char* msg, char* file, int line) {
 			if (!condition) {
 				Engine::Logger::Log(Severe,msg,file,line);
 				LOG_SAVE
@@ -25,7 +25,7 @@ namespace Engine {
 			}
 		}
 
-	}
+	};
 
 }
 
