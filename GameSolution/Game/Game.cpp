@@ -262,17 +262,15 @@ namespace Game {
 			PROFILER_RECORD("frame draw")
 			drawDebug(g);
 
-			//if (gameState == Playing) {
-				g.SetColor(RGB(255,255,255));
-				g.DrawString(SCREEN_WIDTH/2 - 70, 20, "score: ");
-				g.SetColor(RGB(255,255,0));
-				drawValue(g, SCREEN_WIDTH/2 - 10, 20, score);
+			g.SetColor(RGB(255,255,255));
+			g.DrawString(SCREEN_WIDTH/2 - 70, 20, "score: ");
+			g.SetColor(RGB(255,255,0));
+			drawValue(g, SCREEN_WIDTH/2 - 10, 20, score);
 
-				g.SetColor(RGB(255,255,255));
-				g.DrawString(SCREEN_WIDTH/2 + 50, 20, "hp: ");
-				g.SetColor(RGB(255,255,0));
-				drawValue(g, SCREEN_WIDTH/2 + 90, 20, player->hp);
-			//}
+			g.SetColor(RGB(255,255,255));
+			g.DrawString(SCREEN_WIDTH/2 + 50, 20, "hp: ");
+			g.SetColor(RGB(255,255,0));
+			drawValue(g, SCREEN_WIDTH/2 + 90, 20, player->hp);
 		}
 
 		drawInstuctions(g);
