@@ -30,9 +30,9 @@ void Projectile::update(float dt) {
 		Enemy * target = Game::enemyManager->enemies->at(i);
 		if (target->position.distance(position) <= target->radius) {
 			detonate();
-			target->explode(*this);
-			if (target->isDead)
+			if (!target->isDying && target->explode(*this))
 				Game::score += target->points;
+
 			break;
 		}
 	}

@@ -17,7 +17,7 @@ struct EnemyMinionShip : public Enemy {
 	~EnemyMinionShip();
 	void update(float);
 	void draw(EnhancedGraphics&);
-	void explode(Projectile&);
+	bool explode(Projectile&);
 
 	float cosInter(float,float,float);
 	float inter(float a, float b, float mu);

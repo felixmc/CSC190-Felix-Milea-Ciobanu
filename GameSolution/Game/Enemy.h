@@ -8,15 +8,16 @@ using namespace Engine;
 
 struct Enemy : public GameObject {
 	float radius;
-	bool isDead;
+	bool isDead, isDying;
 	int points;
 
 	Enemy(const Vector2 sp, const Shape& sh) : GameObject(sp, sh) {
 		isDead = false;
+		isDying = false;
 	}
 
 	void virtual update(float) = 0;
-	void virtual explode(Projectile&) = 0;
+	bool virtual explode(Projectile&) = 0;
 };
 
 #endif

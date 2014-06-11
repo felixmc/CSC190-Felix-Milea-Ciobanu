@@ -15,13 +15,13 @@ Scene::Scene(float w, float h) : WIDTH(w*1), HEIGHT(h*1), VIEW_WIDTH(w), VIEW_HE
 				Star star(Vector2(x,y));
 				prob = (float) (rand()) / (float) (RAND_MAX);
 				if (prob <= .85f) {
-					star.color = RGBA(255,255,200,20);
+					star.color = RGBA(255,255,200,80);
 				} else if (prob <= .9f) {
 					star.color = RGBA(255,255,0,0);
 				} else if (prob <= .95f) {
 					star.color = RGBA(0,188,255,0);				
 				} else if (prob <= 1.0f) {
-					star.color = RGBA(255,50,10,0);				
+					star.color = RGBA(255,50,10,0);
 				}
 				stars->push_back(star);
 			}

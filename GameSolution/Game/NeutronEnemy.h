@@ -9,7 +9,7 @@ struct NeutronEnemy : Enemy {
 	bool shrink;
 	Timer timer;
 	vector<EnemyMinionShip*> minions;
-	Interpolation * hueInter;
+	Interpolation * hueInter, * posInter, * scaleInter;
 	int hp;
 
 	static const float MINION_DELAY;
@@ -17,7 +17,7 @@ struct NeutronEnemy : Enemy {
 	NeutronEnemy(GameObject* target, Vector2 pos);
 	void update(float);
 	void draw(EnhancedGraphics&);
-	void explode(Projectile&);
+	bool explode(Projectile&);
 };
 
 #endif

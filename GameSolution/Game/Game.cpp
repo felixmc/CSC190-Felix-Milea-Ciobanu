@@ -82,6 +82,8 @@ namespace Game {
 
 	void setupEvents() {
 		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(200,200))); }));
+		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(SCREEN_WIDTH-200,200))); }));
+		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(SCREEN_WIDTH/2,SCREEN_HEIGHT-60))); }));
 	}
 
 	void setup() {
