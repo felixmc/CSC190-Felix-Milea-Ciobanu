@@ -150,7 +150,7 @@ namespace Game {
 			int oldPos = posManIndex;
 			if (oldPos != posManIndex) posManagers[posManIndex]->reset();
 
-			if (player->isDead || enemyManager->enemies->size() == 0) gameState = Ended;
+			if (timer.elapsed() > 5 && (player->isDead || enemyManager->enemies->size() == 0)) gameState = Ended;
 		}
 
 		//if (Input::IsPressed(32)) gameState = gameState == Paused ? Playing : Paused;
