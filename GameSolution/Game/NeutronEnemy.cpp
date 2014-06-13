@@ -52,7 +52,11 @@ void NeutronEnemy::update(float dt) {
 		} else {
 			scale -= .08f;
 			while (minions.size() < 30) {
-				minions.push_back(Game::enemyManager.spawnMinion(this, position));
+				EnemyMinionShip * enemy = new EnemyMinionShip(this);
+				enemy->position = position;
+				enemy->rotation = Math::random(0,2*Math::PI);
+				minions.push_back(enemy);
+				Game::enemyManager.queue.push_back(enemy);
 				timer.interval();
 			}
 		}
@@ -69,7 +73,11 @@ void NeutronEnemy::update(float dt) {
 		scale = scaleInter->getValue();
 
 		if (timer.intervalElapsed() >= MINION_DELAY && minions.size() < 20) {
-			minions.push_back(Game::enemyManager.spawnMinion(this, position));
+			EnemyMinionShip * enemy = new EnemyMinionShip(this);
+			enemy->position = position;
+			enemy->rotation = Math::random(0,2*Math::PI);
+			minions.push_back(enemy);
+			Game::enemyManager.queue.push_back(enemy);
 			timer.interval();
 		}
 	}

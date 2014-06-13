@@ -101,13 +101,7 @@ void PlayerShip::update(float dt) {
 			p.update(dt);
 
 			Vector2 pos = p.position;
-			bool isDead = p.isDead() || pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
-
-			if (isDead) {
-				return true;
-			}
-
-			return false;
+			return p.isDead() || pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
 		}), projectiles.end());
 
 	leftPs->position = Matrix3::translation(position)*Matrix3::rotation(rotation)*Vector2(-24,22);

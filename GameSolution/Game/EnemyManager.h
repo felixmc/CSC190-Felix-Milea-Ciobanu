@@ -7,7 +7,7 @@
 using std::vector;
 
 struct EnemyManager {
-	EnemyMinionShip* spawnMinion(GameObject *, Vector2&);
+	//EnemyMinionShip* spawnMinion(GameObject *, Vector2&);
 	Vector2 spawnPosition;
 
 	EnemyManager();

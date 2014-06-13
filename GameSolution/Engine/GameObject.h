@@ -22,6 +22,8 @@ namespace Engine {
 			scale = 1;
 			color = Color::WHITE;
 		}
+
+		virtual ~GameObject() {}
 		
 		inline void update(float dt) {
 			velocity += acceleration * dt;

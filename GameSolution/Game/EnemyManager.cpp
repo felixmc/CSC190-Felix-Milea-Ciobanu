@@ -35,7 +35,13 @@ void EnemyManager::update(float dt) {
 		[&](Enemy* p) {
 			//if (p == NULL) return true;
 			p->update(dt);
-			return p->isDead;
+
+			if (p->isDead) {
+				delete p;
+				return true;
+			}
+
+			return false;
 	}), enemies.end());
 
 	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
@@ -58,13 +64,13 @@ void EnemyManager::add(Enemy * e) {
 	queue.push_back(e);
 }
 
-EnemyMinionShip* EnemyManager::spawnMinion(GameObject * target, Vector2& pos) {
-	EnemyMinionShip * enemy = new EnemyMinionShip(target);
-	enemy->position = pos;
-	enemy->rotation = Math::random(0,2*Math::PI);
-	queue.push_back(enemy);
-	return enemy;
-}
+//EnemyMinionShip* EnemyManager::spawnMinion(GameObject * target, Vector2& pos) {
+//	EnemyMinionShip * enemy = new EnemyMinionShip(target);
+//	enemy->position = pos;
+//	enemy->rotation = Math::random(0,2*Math::PI);
+//	queue.push_back(enemy);
+//	return enemy;
+//}
 
 void EnemyManager::draw(EnhancedGraphics& g) {
 	for (unsigned int i = 0; i < enemies.size(); i++) {
