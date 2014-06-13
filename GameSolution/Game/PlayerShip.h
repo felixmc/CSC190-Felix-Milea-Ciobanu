@@ -19,6 +19,7 @@ struct PlayerShip : GameObject {
 	int hp;
 
 	PlayerShip(Vector2);
+	~PlayerShip();
 
 	void registerRotateLeft(ShipController);
 	void registerRotateRight(ShipController);

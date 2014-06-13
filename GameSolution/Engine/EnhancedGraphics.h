@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include "Assert.h"
+#include "DebugMemory.h"
 
 using Core::Graphics;
 using std::vector;
@@ -22,7 +23,6 @@ namespace Engine {
 		int curColor;
 		bool hasChanged;
 		Timer timer;
-		//vector<Vector2> * changes;
 
 		inline void swap(float& f1, float& f2) const {
 			float temp = f1;
@@ -55,7 +55,6 @@ namespace Engine {
 
 		inline void resetChanges() {
 			hasChanged = false;
-			//changes->clear();
 		}
 
 		inline bool isOnScreen(const Vector2& p) const {
@@ -68,24 +67,14 @@ namespace Engine {
 			curColor = RGB(255,255,255);
 			timer.start();
 			LOG(Info, "Profiler initialized")
-				//changes = new vector<Vector2>();
+		}
+
+		~EnhancedGraphics() {
+			delete [] bitmapBuffer;
 		}
 
 		inline void draw(Graphics& g) {
 			int count = 0;
-
-			//for (unsigned int i = 0; i < changes->size(); i++) {
-			//	Vector2 p = changes->at(i);
-			//	int color = bitmapBuffer[((int)p.y * WIDTH) + (int)p.x];
-
-			//	if (color != 0) {
-			//		g.SetColor(color);
-			//		gf;
-			//		//g.SetColor(x < WIDTH / 10 && y < HEIGHT / 3 ? gf.filterPx(color) : color);
-			//		plot(g, p);
-			//		count++;
-			//	}
-			//}
 
 			for (int y = 0; y < HEIGHT; y++) {
 				for (int x = 0; x < WIDTH; x++) {
@@ -102,7 +91,6 @@ namespace Engine {
 			float time = timer.interval();
 			int frames = (int)floorf(1.0f / time);
 
-
 			g.SetColor(RGB(255,255,255));
 			g.DrawString(WIDTH - 120, 20,std::to_string(frames).c_str());
 			g.DrawString(WIDTH - 120, 40,std::to_string((int)(time * 1000)).c_str());
@@ -117,7 +105,7 @@ namespace Engine {
 			resetChanges();
 		}
 
-		void drawBitmap(const Vector2& start, int width, int height, int* data) {
+		inline void drawBitmap(const Vector2& start, int width, int height, int* data) {
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
 					setColor(data[(y * width) + x]);
@@ -131,17 +119,18 @@ namespace Engine {
 
 			if (a != 0 && isOnScreen(p)) {
 				int coor = ((int)p.y * WIDTH) + (int)p.x;
-				int c = bitmapBuffer[coor];
-				float na = 1 - a;
-
-				bitmapBuffer[coor] = RGB(
-					min((GetRValue(c) * na) + (GetRValue(curColor) * a),255),
-					min((GetGValue(c) * na) + (GetGValue(curColor) * a),255),
-					min((GetBValue(c) * na) + (GetBValue(curColor) * a),255)
+				
+				if (a == 255) {
+					bitmapBuffer[coor] = curColor;
+				} else {
+					int c = bitmapBuffer[coor];
+					float na = 1 - a;
+					bitmapBuffer[coor] = RGB(
+						min((GetRValue(c) * na) + (GetRValue(curColor) * a),255),
+						min((GetGValue(c) * na) + (GetGValue(curColor) * a),255),
+						min((GetBValue(c) * na) + (GetBValue(curColor) * a),255)
 					);
-
-				//if (c == 0)
-				//changes->push_back(p);
+				}
 
 				change();
 			}

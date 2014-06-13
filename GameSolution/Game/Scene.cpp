@@ -29,6 +29,11 @@ Scene::Scene(float w, float h) : WIDTH(w*1), HEIGHT(h*1), VIEW_WIDTH(w), VIEW_HE
 	}
 }
 
+Scene::~Scene() {
+	stars->clear();
+	delete stars;
+}
+
 const int radius = 4;
 const float ps = 2 * Engine::Math::PI * radius;
 int * Scene::starBitmap = new int[(radius*2)*(radius*2)];

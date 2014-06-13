@@ -3,11 +3,10 @@
 #include "ExplosionParticleSystem.h"
 
 static Vector2 proShape[] = { Vector2(0, -4), Vector2(1, 2), Vector2(-1, 2) };
-static Shape* projShape = SHAPE(proShape);
 
 const float Projectile::PROJ_V = 350;
 
-Projectile::Projectile(Vector2 p, float rot) : GameObject(p, *projShape) {
+Projectile::Projectile(Vector2 p, float rot) : GameObject(p, SHAPE(proShape)) {
 	color = Color::RED;
 	rotation = rot;
 	isDetonated = false;
@@ -21,8 +20,8 @@ EnemyProjectile::EnemyProjectile(Vector2 p, float rot) : Projectile(p, rot) {
 void Projectile::update(float dt) {
 	GameObject::update(dt);
 
-	for (unsigned int i = 0; i < Game::enemyManager->enemies->size(); i++) {
-		Enemy * target = Game::enemyManager->enemies->at(i);
+	for (unsigned int i = 0; i < Game::enemyManager->enemies.size(); i++) {
+		Enemy * target = Game::enemyManager->enemies.at(i);
 		if (target->position.distance(position) <= target->radius) {
 			detonate();
 			if (!target->isDying && target->explode(*this))

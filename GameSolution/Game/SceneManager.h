@@ -9,6 +9,7 @@ class SceneManager {
 
 public:
 	SceneManager();
+	~SceneManager();
 	void add(Scene*);
 	void update(float);
 	void draw(Engine::EnhancedGraphics&);

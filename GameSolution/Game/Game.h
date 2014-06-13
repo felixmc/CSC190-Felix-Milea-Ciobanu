@@ -24,6 +24,7 @@ namespace Game {
 	extern int score;
 
 	void setup();
+	void cleanup();
 	bool update(float);
 	void draw(Core::Graphics&);
 }

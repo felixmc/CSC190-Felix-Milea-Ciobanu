@@ -9,7 +9,7 @@ static Vector2 diamond[] = {
 const float LerpEnemy::SPEED = 300.0f;
 
 LerpEnemy::LerpEnemy(Shape& pth)
-	: GameObject(pth.points[0], *SHAPE(diamond)), path(pth) {
+	: GameObject(pth.points[0], SHAPE(diamond)), path(pth) {
 	mu = 0;
 	pointIndex = 0;
 	muInc = SPEED / (path.points[0] - path.points[1]).length();

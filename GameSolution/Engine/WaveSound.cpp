@@ -23,7 +23,7 @@ void WaveSound::play(char* file) {
 //
 //	infile.seekg (0, ios::end);   // get length of file
 //	int length = infile.tellg();
-//	buffer = new char[length];    // allocate memory
+//	buffer = newtchar[length];    // allocate memory
 //	infile.seekg (0, ios::beg);   // position to start of file
 //	infile.read (buffer,length);  // read entire file
 //

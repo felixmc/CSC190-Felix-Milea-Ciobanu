@@ -16,6 +16,7 @@ struct NeutronEnemy : Enemy {
 	static const float FIRE_DELAY, FIRE_CHANCE;
 
 	NeutronEnemy(GameObject* target, Vector2 pos);
+	~NeutronEnemy();
 	void update(float);
 	void draw(EnhancedGraphics&);
 	bool explode(Projectile&);

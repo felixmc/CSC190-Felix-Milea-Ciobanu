@@ -1,27 +1,48 @@
 #include "EnemyManager.h"
 #include "EngineMath.h"
 #include "Game.h"
+#include "DebugMemory.h"
 
 EnemyManager::EnemyManager() {
-	enemies = new vector<Enemy*>();
-	queue = new vector<Enemy*>();
-	projectiles = new vector<EnemyProjectile*>();
+	enemies = vector<Enemy*>();
+	queue = vector<Enemy*>();
+	projectiles = vector<EnemyProjectile*>();
+}
+
+EnemyManager::~EnemyManager() {
+	enemies.erase(std::remove_if(enemies.begin(), enemies.end(), 
+	[](Enemy* p) {
+		delete p;
+		return true;
+	}), enemies.end());
+
+	queue.erase(std::remove_if(queue.begin(), queue.end(), 
+	[](Enemy* p) {
+		delete p;
+		return true;
+	}), queue.end());
+
+	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
+		[](EnemyProjectile* p) {
+		delete p;
+		return true;
+	}), projectiles.end());
 }
 
 void EnemyManager::update(float dt) {
-	for (unsigned int i = 0; i < queue->size(); i++) {
-		enemies->push_back(queue->at(i));
+	for (unsigned int i = 0; i < queue.size(); i++) {
+		enemies.push_back(queue.at(i));
 	}
 
-	queue->clear();
+	queue.clear();
 
-	enemies->erase(std::remove_if(enemies->begin(), enemies->end(), 
+	enemies.erase(std::remove_if(enemies.begin(), enemies.end(), 
 		[&](Enemy* p) {
 			p->update(dt);
 			return p->isDead;
-	}), enemies->end());
+	}), enemies.end());
 
-	projectiles->erase(std::remove_if(projectiles->begin(), projectiles->end(), 
+	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
 		[&](Projectile* p) {
 			p->update(dt);
 
@@ -34,27 +55,27 @@ void EnemyManager::update(float dt) {
 			}
 
 			return false;
-	}), projectiles->end());
+	}), projectiles.end());
 }
 
 void EnemyManager::add(Enemy * e) {
-	enemies->push_back(e);
+	enemies.push_back(e);
 }
 
 void EnemyManager::spawnMinion(GameObject * object, Vector2& pos) {
 	EnemyMinionShip * enemy = new EnemyMinionShip(object);
 	enemy->position = pos;
 	enemy->rotation = Math::random(0,2*Math::PI);
-	enemies->push_back(enemy);
+	enemies.push_back(enemy);
 }
 
 void EnemyManager::draw(EnhancedGraphics& g) {
-	for (unsigned int i = 0; i < enemies->size(); i++) {
-		enemies->at(i)->draw(g);
+	for (unsigned int i = 0; i < enemies.size(); i++) {
+		enemies.at(i)->draw(g);
 	}
 
-	for (unsigned int i = 0; i < projectiles->size(); i++) {
-		projectiles->at(i)->draw(g);
+	for (unsigned int i = 0; i < projectiles.size(); i++) {
+		projectiles.at(i)->draw(g);
 	}
 
 }

@@ -1,6 +1,7 @@
 #ifndef _PARTICLE_SYSTEM_H_
 #define _PARTICLE_SYSTEM_H_
 
+#include "DebugMemory.h"
 #include "EngineMath.h"
 #include "Particle.h"
 #include <vector>
@@ -12,7 +13,7 @@ namespace Engine {
 
 	class ParticleSystem {
 	protected:
-		vector<Particle*> * particles;
+		vector<Particle*> particles;
 
 		void operator=(ParticleSystem e) { e; }
 
@@ -23,7 +24,7 @@ namespace Engine {
 			p->radius = (int)Math::random((float)minRadius,(float)maxRadius);
 			p->startColor = startColor;
 			p->endColor = endColor;
-			particles->push_back(p);
+			particles.push_back(p);
 
 			return p;
 		}
@@ -42,8 +43,17 @@ namespace Engine {
 			minRadius = maxRadius = 10;
 			sizeDelta = 0;
 			startColor = endColor = RGB(255,255,255);
-			particles = new vector<Particle*>();
+			particles = vector<Particle*>();
 			dead = false;
+		}
+
+		~ParticleSystem() {
+			if (particles.size() > 0)
+			particles.erase(std::remove_if(particles.begin(), particles.end(), 
+			[](Particle* p) {
+				delete p;
+				return true;
+			}), particles.end());
 		}
 
 		virtual bool isDead() {
@@ -51,13 +61,13 @@ namespace Engine {
 		}
 
 		virtual void update(float dt) {
-			for (unsigned int i = 0; i < particles->size(); i++) {
-				Particle* p = (*particles)[i];
+			for (unsigned int i = 0; i < particles.size(); i++) {
+				Particle* p = particles[i];
 				p->update(dt);
 				p->radius = (int)(p->radius + (sizeDelta * dt));
 			}
 
-			particles->erase(std::remove_if(particles->begin(), particles->end(), 
+			particles.erase(std::remove_if(particles.begin(), particles.end(), 
 				[](Particle* p) {
 					if (p->isDead()) {
 						delete p;
@@ -65,16 +75,16 @@ namespace Engine {
 					}
 
 					return false;
-				}), particles->end());
+				}), particles.end());
 
-			while (particles->size() < size) {
+			while (particles.size() < size) {
 				createParticle();
 			}
 		}
 
 		virtual void draw(EnhancedGraphics& g) {
-			for (unsigned int i = 0; i < particles->size(); i++) {
-				Particle* p = (*particles)[i];
+			for (unsigned int i = 0; i < particles.size(); i++) {
+				Particle* p = particles[i];
 				p->draw(g);
 			}
 		}

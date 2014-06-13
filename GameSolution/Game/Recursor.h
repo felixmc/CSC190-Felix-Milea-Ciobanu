@@ -12,6 +12,7 @@ struct Recursor : GameObject {
 	Vector2 oldPos;
 
 	Recursor(Vector2, int);
+	~Recursor();
 
 	void update(float);
 	void draw(EnhancedGraphics&);

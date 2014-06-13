@@ -11,7 +11,7 @@ namespace Engine {
 	using std::min;
 	using std::max;
 
-#define SHAPE(arr) new Shape(sizeof(arr)/sizeof(Vector2), arr)
+#define SHAPE(arr) Shape(sizeof(arr)/sizeof(Vector2), arr)
 
 	struct Shape {
 		const Vector2 * points;
@@ -21,7 +21,7 @@ namespace Engine {
 
 		}
 
-		static Shape * generate(const unsigned int sides, float scale) {
+		static Shape generate(const unsigned int sides, float scale) {
 			Vector2 * shape = new Vector2[sides];
 
 			for (unsigned int i = 0; i < sides; i++) {
@@ -29,7 +29,7 @@ namespace Engine {
 				shape[i] = Vector2(cos(angle), sin(angle))*scale;
 			}
 
-			return new Shape(sides,shape);
+			return Shape(sides,shape);
 		}
 
 		inline void draw(EnhancedGraphics& g, int color, Vector2 position, float scale = 1, float rotation = 0) const {

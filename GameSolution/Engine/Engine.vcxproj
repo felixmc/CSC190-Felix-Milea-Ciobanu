@@ -101,6 +101,7 @@
     <ClCompile Include="WaveSound.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Game\DebugMemory.h" />
     <ClInclude Include="AClass.h" />
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Color.h" />

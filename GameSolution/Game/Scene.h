@@ -21,6 +21,7 @@ public:
 	Vector2 offset, velocity;
 
 	Scene(float,float);
+	~Scene();
 	void update(float);
 	void draw(Engine::EnhancedGraphics&);
 

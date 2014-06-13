@@ -1,4 +1,5 @@
 #include "PlayerShip.h"
+#include "DebugMemory.h"
 #include "Shape.h"
 #include "Core.h"
 #include "Game.h"
@@ -32,8 +33,8 @@ const float PlayerShip::TURRET_OFFSET = 5.0f;
 const float PlayerShip::FIRE_DELAY = 220;
 
 PlayerShip::PlayerShip(Vector2 startPos)
-: GameObject(startPos, *SHAPE(ship)) {
-	gun = new GameObject(startPos, *SHAPE(gunShape));
+: GameObject(startPos, SHAPE(ship)) {
+	gun = new GameObject(startPos, SHAPE(gunShape));
 	gun->color = Color::YELLOW;
 	lastFired = 0;
 	isDead = false;
@@ -62,6 +63,16 @@ PlayerShip::PlayerShip(Vector2 startPos)
 	Game::particleManager->add(rightPs);
 
 	hp = 10;
+}
+
+PlayerShip::~PlayerShip() {
+	delete gun;
+
+	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
+	[](Projectile* p) {
+		delete p;
+		return true;
+	}), projectiles.end());
 }
 
 void PlayerShip::update(float dt) {

@@ -11,6 +11,7 @@
 #include <ctime>
 #include <cmath>
 #include "Logger.h"
+#include "DebugMemory.h"
 
 using Core::Input;
 
@@ -34,7 +35,7 @@ namespace Game {
 		Vector2(0,SCREEN_HEIGHT/2.f)
 	};
 
-	Shape& boundary = *SHAPE(boundaryPoints);
+	Shape boundary = SHAPE(boundaryPoints);
 	PositionManager* posManagers[3];
 	int posManIndex = 0;
 
@@ -52,6 +53,20 @@ namespace Game {
 	Recursor* rec;
 
 	int score = 0;
+
+	void cleanup() {
+		delete center;
+		delete eg;
+		delete particleManager;
+		delete enemyManager;
+		delete sceneManager;
+		delete player;
+		delete rec;
+
+		for (int i = 0; i < 3; i++) {
+			delete posManagers[i];
+		}
+	}
 
 	void setupEvents() {
 		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(200,200))); }));
@@ -111,18 +126,21 @@ namespace Game {
 
 	bool update(float dt) {
 
-		PROFILER_FRAME
-
-		PROFILER_START
-		sceneManager->update(dt);
-		PROFILER_RECORD("scene update")
-
 		if (gameState == Loading) {
+			sceneManager->update(dt);
 			if(timer.elapsed() >= 2) {
 				gameState = Playing;
 				timer.start();
 			}
-		} else if (gameState == Playing) {
+		} else {	
+			PROFILER_FRAME
+		}
+
+		if (gameState == Playing) {
+			PROFILER_START
+			sceneManager->update(dt);
+			PROFILER_RECORD("scene update")
+
 			rec->update(dt);
 
 			PROFILER_START
@@ -150,7 +168,7 @@ namespace Game {
 			int oldPos = posManIndex;
 			if (oldPos != posManIndex) posManagers[posManIndex]->reset();
 
-			if (timer.elapsed() > 5 && (player->isDead || enemyManager->enemies->size() == 0)) gameState = Ended;
+			if (timer.elapsed() > 5 && (player->isDead || enemyManager->enemies.size() == 0)) gameState = Ended;
 		}
 
 		//if (Input::IsPressed(32)) gameState = gameState == Paused ? Playing : Paused;

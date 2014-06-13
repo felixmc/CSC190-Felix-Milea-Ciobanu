@@ -1,6 +1,7 @@
 #ifndef _PARTICLE_MANAGER_H_
 #define _PARTICLE_MANAGER_H_
 
+#include "DebugMemory.h"
 #include "ParticleSystem.h"
 
 namespace Engine {
@@ -11,6 +12,16 @@ namespace Engine {
 	public:
 		ParticleManager() {
 			particles = new vector<ParticleSystem*>();
+		}
+
+		~ParticleManager() {
+			particles->erase(std::remove_if(particles->begin(), particles->end(), 
+			[](ParticleSystem* p) {
+				delete p;
+				return true;
+			}), particles->end());
+
+			delete particles;
 		}
 
 		void add(ParticleSystem * ps) {

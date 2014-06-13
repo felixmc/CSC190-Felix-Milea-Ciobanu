@@ -1,3 +1,4 @@
+#include "DebugMemory.h"
 #include "EnemyMinionShip.h"
 #include "ExplosionParticleSystem.h"
 #include "Game.h"
@@ -14,7 +15,7 @@ static Vector2 diamond[] = {
 const float EnemyMinionShip::PING_DELAY = .200f;
 const float EnemyMinionShip::SPEED = 200;
 
-EnemyMinionShip::EnemyMinionShip(GameObject* target) : Enemy(Vector2(200,200), *SHAPE(diamond)), target(target) {
+EnemyMinionShip::EnemyMinionShip(GameObject* target) : Enemy(Vector2(200,200), SHAPE(diamond)), target(target) {
 	radius = 10;
 	mu = 0;
 	muInc = 0;

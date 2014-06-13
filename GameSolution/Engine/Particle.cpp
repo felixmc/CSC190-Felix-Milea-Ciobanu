@@ -1,4 +1,5 @@
 #include "Particle.h"
+#include "DebugMemory.h"
 
 bool Engine::Particle::loaded[20];
 float * Engine::Particle::cache[20];

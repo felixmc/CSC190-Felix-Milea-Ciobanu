@@ -11,13 +11,14 @@ struct EnemyManager {
 	Vector2 spawnPosition;
 
 	EnemyManager();
+	~EnemyManager();
 	void add(Enemy *);
 	void update(float);
 	void draw(EnhancedGraphics&);
 
 //private:
-	vector<Enemy*> * enemies, * queue;
-	vector<EnemyProjectile*> * projectiles;
+	vector<Enemy*> enemies, queue;
+	vector<EnemyProjectile*> projectiles;
 };
 
 #endif

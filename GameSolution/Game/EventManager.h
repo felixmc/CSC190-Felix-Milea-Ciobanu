@@ -14,6 +14,16 @@ struct EventManager {
 		events = new vector<GameEvent*>();
 	}
 
+	~EventManager() {
+		events->erase(std::remove_if(events->begin(), events->end(), 
+		[](GameEvent* p) {
+			delete p;
+			return true;
+		}), events->end());
+
+		delete events;
+	}
+
 	void add(GameEvent * ps) {
 		events->push_back(ps);
 	}

@@ -1,9 +1,7 @@
 #include "Game.h"
-//#include "Assert.h"
 
 int main() {
-
-	ASSERTM(true, "something terrible happened!");
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
 
 	Game::setup();
 
@@ -12,6 +10,8 @@ int main() {
 	Core::RegisterDrawFn(Game::draw);
 
 	Core::GameLoop();
+
+	Game::cleanup();
 
 	return 0;
 }

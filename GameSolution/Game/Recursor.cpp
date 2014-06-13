@@ -1,4 +1,5 @@
 #include "Recursor.h"
+#include "DebugMemory.h"
 #include "Shape.h"
 #include "Matrix2.h"
 #include "Core.h"
@@ -13,7 +14,7 @@ static Vector2 baseShape[] = {
 
 const float Recursor::ROT_SPD = 0.2f;
 
-Recursor::Recursor(Vector2 pos, int c) : oldPos(pos), GameObject(pos,*SHAPE(baseShape)) {
+Recursor::Recursor(Vector2 pos, int c) : oldPos(pos), GameObject(pos,SHAPE(baseShape)) {
 	parent = NULL;
 	if (c > 0) {
 		child = new Recursor(pos + (Vector2(15,15) * (float)c * 1.7f), c - 1);
@@ -22,6 +23,11 @@ Recursor::Recursor(Vector2 pos, int c) : oldPos(pos), GameObject(pos,*SHAPE(base
 	} else {
 		child = NULL;
 	}
+}
+
+Recursor::~Recursor() {
+	if (child != NULL)
+		delete child;
 }
 
 int Recursor::getLevel() {
