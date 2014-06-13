@@ -21,14 +21,14 @@ EnemyProjectile::EnemyProjectile(Vector2 p, float rot) : Projectile(p, rot) {
 void Projectile::update(float dt) {
 	GameObject::update(dt);
 
-	for (unsigned int i = 0; i < Game::enemyManager.enemies.size(); i++) {
+	for (unsigned int i = 0; i < Game::enemyManager.enemies.size() && !isDetonated; i++) {
 		Enemy * target = Game::enemyManager.enemies.at(i);
 		if (target->position.distance(position) <= target->radius) {
-			detonate();
-			if (!target->isDying && target->explode(*this))
+			if (!target->isDying && target->explode(*this)) {
 				Game::score += target->points;
+			}
 
-			break;
+			detonate();
 		}
 	}
 }
@@ -47,9 +47,7 @@ bool Projectile::isDead() const {
 }
 
 void Projectile::detonate() {
-	if (!isDetonated) {
-		isDetonated = true;
-	}
+	isDetonated = true;
 }
 
 Projectile::~Projectile() {

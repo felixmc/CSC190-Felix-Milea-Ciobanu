@@ -96,12 +96,20 @@ void PlayerShip::update(float dt) {
 		}
 	}
 
+	for (unsigned int i = 0; i < projectiles.size(); i++) {
+		projectiles.at(i).update(dt);
+	}
+
 	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
 		[&](Projectile& p) {
-			p.update(dt);
-
 			Vector2 pos = p.position;
-			return p.isDead() || pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
+			bool dead = p.isDead() || pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
+			 
+			if (dead) {
+				return true;
+			}
+
+			return false;
 		}), projectiles.end());
 
 	leftPs->position = Matrix3::translation(position)*Matrix3::rotation(rotation)*Vector2(-24,22);
