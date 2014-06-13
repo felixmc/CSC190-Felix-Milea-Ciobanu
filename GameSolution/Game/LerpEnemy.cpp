@@ -1,5 +1,6 @@
 #include "LerpEnemy.h"
 #include "Shape.h"
+#include "DebugMemory.h"
 
 static Vector2 diamond[] = {
 	Vector2(0,-20),Vector2(20,0),

@@ -35,7 +35,7 @@ void EnemyMinionShip::update(float dt) {
 	GameObject::update(dt);
 	
 	hueInter->update(dt);
-	color = HSB((int)hueInter->getValue()+(target == Game::player ? 0 : -100),100,100);
+	color = HSB((int)hueInter->getValue()+(target == &Game::player ? 0 : -100),100,100);
 	Vector2 diff = (targetPosition - position).perpCCW();
 	rotation = atan2(-diff.y, -diff.x);
 
@@ -90,7 +90,7 @@ bool EnemyMinionShip::explode(Projectile& pro) {
 	ps->startColor = RGBA(GetRValue(color),GetGValue(color),GetBValue(color),170);
 	ps->endColor = RGBA(GetRValue(color),GetGValue(color),GetBValue(color),255);
 		
-	Game::particleManager->add(ps);
+	Game::particleManager.add(ps);
 
 	return isDead;
 }

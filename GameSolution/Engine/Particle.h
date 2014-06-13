@@ -1,6 +1,7 @@
 #ifndef _PARTICLE_H_
 #define _PARTICLE_H_
 
+#include "DebugMemory.h"
 #include "EnhancedGraphics.h"
 #include "Matrix3.h"
 #include "EngineMath.h"
@@ -13,7 +14,7 @@ namespace Engine {
 		int startColor;
 		int endColor;
 		float lifeTime;
-		const float maxLifeTime;
+		float maxLifeTime;
 
 		Particle(float l) : maxLifeTime(l), lifeTime(0) {}
 
@@ -42,15 +43,16 @@ namespace Engine {
 		}
 
 	private:
-		void operator=(Particle e) { e; }
-
 		static bool loaded[20];
 		static float * cache[20];
 
 	public:
-
 		static float* particleMap(int);
-
+		static void cleanup() {
+			for (int i = 0; i < 20; i++) {
+				delete cache[i];
+			}
+		}
 	};
 
 }

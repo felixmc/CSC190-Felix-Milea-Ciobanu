@@ -16,6 +16,8 @@ struct Enemy : public GameObject {
 		isDying = false;
 	}
 
+	virtual ~Enemy() {}
+
 	void virtual update(float) = 0;
 	bool virtual explode(Projectile&) = 0;
 };

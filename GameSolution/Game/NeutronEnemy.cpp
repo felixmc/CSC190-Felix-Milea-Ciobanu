@@ -5,7 +5,9 @@ const float NeutronEnemy::MINION_DELAY = 0.5f;
 const float NeutronEnemy::FIRE_DELAY = .5f;
 const float NeutronEnemy::FIRE_CHANCE = 1;
 
-NeutronEnemy::NeutronEnemy(GameObject* target, Vector2 pos) : target(target), Enemy(pos, Shape::generate(20,15)) {
+Vector2 sides[20];
+
+NeutronEnemy::NeutronEnemy(GameObject* target, Vector2 pos) : target(target), Enemy(pos, Shape::generate(sides,20,15)) {
 	shrink = false;
 	timer.start();
 	fireTimer.start();
@@ -50,19 +52,16 @@ void NeutronEnemy::update(float dt) {
 		} else {
 			scale -= .08f;
 			while (minions.size() < 30) {
-				EnemyMinionShip* minion = new EnemyMinionShip(this);
-				minion->position = position;
-				minions.push_back(minion);
-				Game::enemyManager->queue.push_back(minion);
+				minions.push_back(Game::enemyManager.spawnMinion(this, position));
 				timer.interval();
 			}
 		}
 	} else{
 		if (Game::timer.elapsed() > 3 && fireTimer.intervalElapsed() > FIRE_DELAY && Math::random(0,100) < FIRE_CHANCE) {
-			Vector2 diff = (Game::player->position - position).perpCW();
+			Vector2 diff = (Game::player.position - position).perpCW();
 			float rotation = atan2(-diff.y, -diff.x);
 			EnemyProjectile* p = new EnemyProjectile(position, rotation);
-			Game::enemyManager->projectiles.push_back(p);
+			Game::enemyManager.projectiles.push_back(p);
 			fireTimer.interval();
 		}
 
@@ -70,10 +69,7 @@ void NeutronEnemy::update(float dt) {
 		scale = scaleInter->getValue();
 
 		if (timer.intervalElapsed() >= MINION_DELAY && minions.size() < 20) {
-			EnemyMinionShip* minion = new EnemyMinionShip(this);
-			minion->position = position;
-			minions.push_back(minion);
-			Game::enemyManager->queue.push_back(minion);
+			minions.push_back(Game::enemyManager.spawnMinion(this, position));
 			timer.interval();
 		}
 	}
@@ -99,7 +95,7 @@ bool NeutronEnemy::explode(Projectile& p) {
 	ps->startColor = AFilter(p.color,180);
 	ps->endColor = RGBA(0,0,0,255);
 
-	Game::particleManager->add(ps);
+	Game::particleManager.add(ps);
 
 	if (--hp <= 0) {
 		shrink = true;

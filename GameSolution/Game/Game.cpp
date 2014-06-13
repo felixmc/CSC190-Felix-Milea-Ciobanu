@@ -26,7 +26,7 @@ using Core::Input;
 namespace Game {
 	const int SCREEN_WIDTH = 1280;
 	const int SCREEN_HEIGHT = 720;
-	const Vector2 * center;
+	const Vector2 center(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 
 	Vector2 boundaryPoints[] = {
 		Vector2(SCREEN_WIDTH/2.f,0),
@@ -41,37 +41,33 @@ namespace Game {
 
 	GameMenu gameMenu;
 	GameState gameState = Loading;
-	EnhancedGraphics* eg;
+	EnhancedGraphics eg(SCREEN_WIDTH, SCREEN_HEIGHT);
 	Timer timer;
 	EventManager eventManager;
 
-	ParticleManager * particleManager;
-	EnemyManager * enemyManager;
-	SceneManager * sceneManager;
+	ParticleManager particleManager;
+	EnemyManager enemyManager;
+	SceneManager sceneManager;
 
-	PlayerShip * player;
+	PlayerShip player(center);
 	Recursor* rec;
 
 	int score = 0;
 
 	void cleanup() {
-		delete center;
-		delete eg;
-		delete particleManager;
-		delete enemyManager;
-		delete sceneManager;
-		delete player;
 		delete rec;
 
 		for (int i = 0; i < 3; i++) {
 			delete posManagers[i];
 		}
+
+		Particle::cleanup();
 	}
 
 	void setupEvents() {
-		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(200,200))); }));
-		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(SCREEN_WIDTH-200,200))); }));
-		eventManager.add(new TimeEvent(1, [](){ enemyManager->add(new NeutronEnemy(player,Vector2(SCREEN_WIDTH/2,SCREEN_HEIGHT-70))); }));
+		eventManager.add(new TimeEvent(1, [](){ enemyManager.add(new NeutronEnemy(&player,Vector2(200,200))); }));
+		eventManager.add(new TimeEvent(1, [](){ enemyManager.add(new NeutronEnemy(&player,Vector2(SCREEN_WIDTH-200,200))); }));
+		eventManager.add(new TimeEvent(1, [](){ enemyManager.add(new NeutronEnemy(&player,Vector2(SCREEN_WIDTH/2,SCREEN_HEIGHT-70))); }));
 	}
 
 	void setup() {
@@ -79,32 +75,22 @@ namespace Game {
 
 		PROFILER_INIT
 
-		center = new Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-
-		eg = new EnhancedGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-		particleManager = new ParticleManager();
-
 		posManagers[0] = new PositionWrapper(SCREEN_WIDTH, SCREEN_HEIGHT);
 		posManagers[1] = new PositionBouncer(SCREEN_WIDTH, SCREEN_HEIGHT);
 		posManagers[2] = new PositionBoundary(boundary);
 
-		player = new PlayerShip(*center);
-		player->color = Color::CYAN2;
-		player->gun->color = Color::YELLOW;
-
-		enemyManager = new EnemyManager();
+		player.color = Color::CYAN2;
+		player.gun->color = Color::YELLOW;
 
 		Scene::init();
 
-		sceneManager = new SceneManager();
-		Scene *scene1 = new Scene((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
-		scene1->velocity = Vector2(15,10);
-		sceneManager->add(scene1);
+		Scene scene1((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
+		scene1.velocity = Vector2(15,10);
+		sceneManager.add(scene1);
 
-		Scene *scene2 = new Scene((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
-		scene2->velocity = Vector2(-5,-15);
-		sceneManager->add(scene2);
+		Scene scene2((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
+		scene2.velocity = Vector2(-5,-15);
+		sceneManager.add(scene2);
 
 		rec = new Recursor(Vector2((float)SCREEN_WIDTH - 250, (float)SCREEN_HEIGHT-150.0f), 3);
 		rec->color = Color::YELLOW;
@@ -112,11 +98,11 @@ namespace Game {
 		rec->child->child->color = Color::RED;
 		rec->child->child->child->color = Color::MAGENTA;
 
-		player->registerRotateLeft([](){ return Input::IsPressed(65); });
-		player->registerRotateRight([](){ return Input::IsPressed(68); });
-		player->registerMoveUp([](){ return Input::IsPressed(87); });
-		player->registerMoveDown([](){ return Input::IsPressed(83); });
-		player->registerFire([](){ return Input::IsPressed(Input::BUTTON_LEFT); });
+		player.registerRotateLeft([](){ return Input::IsPressed(65); });
+		player.registerRotateRight([](){ return Input::IsPressed(68); });
+		player.registerMoveUp([](){ return Input::IsPressed(87); });
+		player.registerMoveDown([](){ return Input::IsPressed(83); });
+		player.registerFire([](){ return Input::IsPressed(Input::BUTTON_LEFT); });
 
 		setupEvents();
 
@@ -127,7 +113,7 @@ namespace Game {
 	bool update(float dt) {
 
 		if (gameState == Loading) {
-			sceneManager->update(dt);
+			sceneManager.update(dt);
 			if(timer.elapsed() >= 2) {
 				gameState = Playing;
 				timer.start();
@@ -138,22 +124,22 @@ namespace Game {
 
 		if (gameState == Playing) {
 			PROFILER_START
-			sceneManager->update(dt);
+			sceneManager.update(dt);
 			PROFILER_RECORD("scene update")
 
 			rec->update(dt);
 
 			PROFILER_START
-			player->update(dt);
-			posManagers[posManIndex]->reposition(*player, dt);
+			player.update(dt);
+			posManagers[posManIndex]->reposition(player, dt);
 			PROFILER_RECORD("player update")
 
 			PROFILER_START
-			enemyManager->update(dt);
+			enemyManager.update(dt);
 			PROFILER_RECORD("enemy update")
 
 			PROFILER_START
-			particleManager->update(dt);
+			particleManager.update(dt);
 			PROFILER_RECORD("particles update")
 
 			PROFILER_START
@@ -168,7 +154,7 @@ namespace Game {
 			int oldPos = posManIndex;
 			if (oldPos != posManIndex) posManagers[posManIndex]->reset();
 
-			if (timer.elapsed() > 5 && (player->isDead || enemyManager->enemies.size() == 0)) gameState = Ended;
+			if (timer.elapsed() > 5 && (player.isDead || enemyManager.enemies.size() == 0)) gameState = Ended;
 		}
 
 		//if (Input::IsPressed(32)) gameState = gameState == Paused ? Playing : Paused;
@@ -202,7 +188,7 @@ namespace Game {
 
 	void drawDebug(Core::Graphics& g) {
 		g.SetColor(Color::GREEN);
-		Matrix3 trans = Matrix3::translation(player->position)*Matrix3::rotation(player->rotation);
+		Matrix3 trans = Matrix3::translation(player.position)*Matrix3::rotation(player.rotation);
 		Engine::drawValue(g, 20, SCREEN_HEIGHT-80, trans);
 	}
 
@@ -236,7 +222,7 @@ namespace Game {
 			g.SetColor(RGB(255,255,0));
 			g.DrawString(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+20, "LOADING...");
 		} else if (gameState == Ended) {
-			if (player->isDead) {
+			if (player.isDead) {
 				g.SetColor(RGB(255,0,0));
 				g.DrawString(SCREEN_WIDTH/2-25, 150, "GAME OVER!");
 			} else {
@@ -258,25 +244,25 @@ namespace Game {
 			}
 
 			PROFILER_START
-			sceneManager->draw(*eg);
+			sceneManager.draw(eg);
 			PROFILER_RECORD("scene draw")
 
-			rec->draw(*eg);
+			rec->draw(eg);
 
 			PROFILER_START
-			player->draw(*eg);
+			player.draw(eg);
 			PROFILER_RECORD("player draw")
 
 			PROFILER_START
-			enemyManager->draw(*eg);
+			enemyManager.draw(eg);
 			PROFILER_RECORD("enemies draw")
 
 			PROFILER_START
-			particleManager->draw(*eg);
+			particleManager.draw(eg);
 			PROFILER_RECORD("particles draw")
 
 			PROFILER_START
-			eg->draw(g);
+			eg.draw(g);
 			PROFILER_RECORD("frame draw")
 			drawDebug(g);
 
@@ -288,8 +274,11 @@ namespace Game {
 			g.SetColor(RGB(255,255,255));
 			g.DrawString(SCREEN_WIDTH/2 + 50, 20, "hp: ");
 			g.SetColor(RGB(255,255,0));
-			drawValue(g, SCREEN_WIDTH/2 + 90, 20, player->hp);
+			drawValue(g, SCREEN_WIDTH/2 + 90, 20, player.hp);
 		}
+
+		/*_CrtMemState *state;
+		_CrtMemCheckpoint(state);*/
 
 		drawInstuctions(g);
 	}

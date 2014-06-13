@@ -2,6 +2,7 @@
 #define _ENGINE_INTERPOLATION_H_
 
 #include "EngineMath.h"
+#include "DebugMemory.h"
 #include <limits>
 #include <cmath>
 
@@ -12,12 +13,12 @@ namespace Engine {
 
 	class Interpolation {
 		float currentTime, value;
-		float const start, end, duration, repeat;
+		float start, end, duration, repeat;
 		int its;
-		const InterpolationMethod fn;
-		const Direction direction;
+		InterpolationMethod fn;
+		Direction direction;
 
-		void operator=(Interpolation e) { e; }
+		
 	public:
 		Interpolation( float start, float end, float duration = 120.0f,  InterpolationMethod fn = linear,
 			Direction direction = Normal, float repeat = std::numeric_limits<float>::infinity()) :

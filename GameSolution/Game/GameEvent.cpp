@@ -1,5 +1,6 @@
 #include "GameEvent.h"
 #include "Game.h"
+#include "DebugMemory.h"
 
 ScoreEvent::ScoreEvent(int s, RunMethod runM) : runMethod(runM), score(s) { }
 

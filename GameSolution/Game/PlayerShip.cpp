@@ -59,20 +59,14 @@ PlayerShip::PlayerShip(Vector2 startPos)
 	rightPs->endColor = leftPs->endColor;
 	rightPs->sizeDelta = leftPs->sizeDelta;
 
-	Game::particleManager->add(leftPs);
-	Game::particleManager->add(rightPs);
+	Game::particleManager.add(leftPs);
+	Game::particleManager.add(rightPs);
 
 	hp = 10;
 }
 
 PlayerShip::~PlayerShip() {
 	delete gun;
-
-	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
-	[](Projectile* p) {
-		delete p;
-		return true;
-	}), projectiles.end());
 }
 
 void PlayerShip::update(float dt) {
@@ -98,20 +92,18 @@ void PlayerShip::update(float dt) {
 		ULONGLONG now = GetTickCount64();
 		if (now - lastFired > FIRE_DELAY) {
 			lastFired = now;
-			Projectile* p = new Projectile(gun->position, gun->rotation);
-			projectiles.push_back(p);
+			projectiles.push_back(Projectile(gun->position, gun->rotation));
 		}
 	}
 
 	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
-		[&](Projectile* p) {
-			p->update(dt);
+		[&](Projectile& p) {
+			p.update(dt);
 
-			Vector2 pos = p->position;
-			bool isDead = p->isDead() || pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
+			Vector2 pos = p.position;
+			bool isDead = p.isDead() || pos.x < -5 || pos.x > Game::SCREEN_WIDTH + 5 || pos.y < -5 || pos.y > Game::SCREEN_HEIGHT + 5;
 
 			if (isDead) {
-				delete p;
 				return true;
 			}
 
@@ -145,8 +137,7 @@ void PlayerShip::draw(EnhancedGraphics& g) {
 	gun->draw(g);
 	GameObject::draw(g);
 	for (unsigned int i = 0; i < projectiles.size(); i++) {
-		GameObject* p = projectiles[i];
-		p->draw(g);
+		projectiles[i].draw(g);
 	}
 }
 
@@ -188,7 +179,7 @@ void PlayerShip::hit(EnemyProjectile& p) {
 	ps->startColor = AFilter(color,100);
 	ps->endColor = RGBA(0,0,0,255);
 
-	Game::particleManager->add(ps);
+	Game::particleManager.add(ps);
 }
 
 void PlayerShip::registerRotateLeft(ShipController c) { rotateLeftController = c; }

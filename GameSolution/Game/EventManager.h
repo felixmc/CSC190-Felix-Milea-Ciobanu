@@ -1,6 +1,7 @@
 #ifndef _EVENT_MANAGER_H
 #define _EVENT_MANAGER_H
 
+#include "DebugMemory.h"
 #include "EnhancedGraphics.h"
 #include "GameEvent.h"
 #include <vector>
@@ -8,28 +9,26 @@
 using std::vector;
 
 struct EventManager {
-	vector<GameEvent*> * events;
+	vector<GameEvent*> events;
 
 	EventManager() {
-		events = new vector<GameEvent*>();
+		events = vector<GameEvent*>();
 	}
 
 	~EventManager() {
-		events->erase(std::remove_if(events->begin(), events->end(), 
+		events.erase(std::remove_if(events.begin(), events.end(), 
 		[](GameEvent* p) {
 			delete p;
 			return true;
-		}), events->end());
-
-		delete events;
+		}), events.end());
 	}
 
 	void add(GameEvent * ps) {
-		events->push_back(ps);
+		events.push_back(ps);
 	}
 
 	void update(float dt) {
-		events->erase(std::remove_if(events->begin(), events->end(), 
+		events.erase(std::remove_if(events.begin(), events.end(), 
 			[&](GameEvent* p) {
 				if (p->isDead()) {
 					delete p;
@@ -41,7 +40,7 @@ struct EventManager {
 
 					return false;
 				}
-		}), events->end());
+		}), events.end());
 	}
 
 };

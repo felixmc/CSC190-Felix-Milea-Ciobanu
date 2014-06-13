@@ -19,7 +19,7 @@ namespace Engine {
 #define LOG_SAVE Logger::shutDown();
 #else
 	#define LOG( severity, message)
-	#define SAVE_LOG
+	#define LOG_SAVE
 #endif
 
 #pragma warning ( disable : 4100)

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "EnhancedGraphics.h"
 #include "Matrix3.h"
+#include "DebugMemory.h"
 
 namespace Engine {
 	using std::min;
@@ -21,9 +22,11 @@ namespace Engine {
 
 		}
 
-		static Shape generate(const unsigned int sides, float scale) {
-			Vector2 * shape = new Vector2[sides];
+		~Shape() {
 
+		}
+
+		static Shape generate(Vector2* shape, const unsigned int sides, float scale) {
 			for (unsigned int i = 0; i < sides; i++) {
 				float angle = (3.14f * 2 / sides) * i;
 				shape[i] = Vector2(cos(angle), sin(angle))*scale;

@@ -7,29 +7,27 @@
 namespace Engine {
 
 	class ParticleManager {
-		vector<ParticleSystem*> * particles;
+		vector<ParticleSystem*> particles;
 
 	public:
 		ParticleManager() {
-			particles = new vector<ParticleSystem*>();
+			particles = vector<ParticleSystem*>();
 		}
 
 		~ParticleManager() {
-			particles->erase(std::remove_if(particles->begin(), particles->end(), 
+			particles.erase(std::remove_if(particles.begin(), particles.end(), 
 			[](ParticleSystem* p) {
 				delete p;
 				return true;
-			}), particles->end());
-
-			delete particles;
+			}), particles.end());
 		}
 
 		void add(ParticleSystem * ps) {
-			particles->push_back(ps);
+			particles.push_back(ps);
 		}
 
 		void update(float dt) {
-			particles->erase(std::remove_if(particles->begin(), particles->end(), 
+			particles.erase(std::remove_if(particles.begin(), particles.end(), 
 				[&](ParticleSystem* p) {
 					if (p->isDead()) {
 						delete p;
@@ -38,12 +36,12 @@ namespace Engine {
 						p->update(dt);
 						return false;
 					}
-				}), particles->end());
+				}), particles.end());
 		}
 
 		void draw(EnhancedGraphics& g) {
-			for (unsigned int i = 0; i < particles->size(); i++) {
-				ParticleSystem* p = (*particles)[i];
+			for (unsigned int i = 0; i < particles.size(); i++) {
+				ParticleSystem* p = particles[i];
 				p->draw(g);
 			}		
 		}

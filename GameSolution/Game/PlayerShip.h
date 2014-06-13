@@ -14,7 +14,7 @@ typedef bool (*ShipController)();
 struct PlayerShip : GameObject {
 	GameObject* gun;
 	ParticleSystem * leftPs, * rightPs;
-	std::vector<Projectile*> projectiles;
+	std::vector<Projectile> projectiles;
 	bool isDead;
 	int hp;
 

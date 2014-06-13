@@ -1,4 +1,5 @@
 #include "Logger.h"
+#include "DebugMemory.h"
 #include <ctime>
 
 using Engine::Logger;

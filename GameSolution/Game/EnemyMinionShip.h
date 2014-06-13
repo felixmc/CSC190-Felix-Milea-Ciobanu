@@ -10,6 +10,7 @@ struct EnemyMinionShip : public Enemy {
 	float mu, muInc;
 	Timer timer;
 	Vector2 start, targetPosition;
+
 	Interpolation * hueInter;
 	GameObject* target;
 

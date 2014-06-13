@@ -8,7 +8,7 @@
 #define ASSERTM(c,msg) Engine::Assert::makeAssert(c,msg,__FILE__,__LINE__);
 #define ASSERT(c) Engine::Assert::makeAssert(c,"An assertion has failed.",__FILE__,__LINE__);
 #else
-#define ASSERT(c,msg)
+#define ASSERTM(c,msg)
 #define ASSERT(c)
 #endif
 

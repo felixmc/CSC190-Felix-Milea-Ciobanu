@@ -1,5 +1,6 @@
 #include "Projectile.h"
 #include "Game.h"
+#include "DebugMemory.h"
 #include "ExplosionParticleSystem.h"
 
 static Vector2 proShape[] = { Vector2(0, -4), Vector2(1, 2), Vector2(-1, 2) };
@@ -20,8 +21,8 @@ EnemyProjectile::EnemyProjectile(Vector2 p, float rot) : Projectile(p, rot) {
 void Projectile::update(float dt) {
 	GameObject::update(dt);
 
-	for (unsigned int i = 0; i < Game::enemyManager->enemies.size(); i++) {
-		Enemy * target = Game::enemyManager->enemies.at(i);
+	for (unsigned int i = 0; i < Game::enemyManager.enemies.size(); i++) {
+		Enemy * target = Game::enemyManager.enemies.at(i);
 		if (target->position.distance(position) <= target->radius) {
 			detonate();
 			if (!target->isDying && target->explode(*this))
@@ -35,9 +36,9 @@ void Projectile::update(float dt) {
 void EnemyProjectile::update(float dt) {
 	GameObject::update(dt);
 
-	if (Game::player->position.distance(position) <= 10) {
+	if (Game::player.position.distance(position) <= 10) {
 		detonate();
-		Game::player->hit(*this);
+		Game::player.hit(*this);
 	}
 }
 

@@ -1,11 +1,11 @@
 #ifndef _PARTICLE_SYSTEM_H_
 #define _PARTICLE_SYSTEM_H_
 
-#include "DebugMemory.h"
 #include "EngineMath.h"
 #include "Particle.h"
 #include <vector>
 #include <algorithm>
+#include "DebugMemory.h"
 
 using std::vector;
 
@@ -13,17 +13,17 @@ namespace Engine {
 
 	class ParticleSystem {
 	protected:
-		vector<Particle*> particles;
+		vector<Particle> particles;
 
-		void operator=(ParticleSystem e) { e; }
+		//void operator=(ParticleSystem e) { e; }
 
-		inline Particle* createParticle() {
-			Particle *p = new Particle(Math::random(minLifeTime,maxLifeTime));
-			p->position = position + Vector2(Math::random(minPositionOffset.x,maxPositionOffset.x),Math::random(minPositionOffset.y,maxPositionOffset.y));
-			p->velocity = Vector2(Math::random(minVelocity.x,maxVelocity.x),Math::random(minVelocity.y,maxVelocity.y));
-			p->radius = (int)Math::random((float)minRadius,(float)maxRadius);
-			p->startColor = startColor;
-			p->endColor = endColor;
+		inline Particle createParticle() {
+			Particle p = Particle(Math::random(minLifeTime,maxLifeTime));
+			p.position = position + Vector2(Math::random(minPositionOffset.x,maxPositionOffset.x),Math::random(minPositionOffset.y,maxPositionOffset.y));
+			p.velocity = Vector2(Math::random(minVelocity.x,maxVelocity.x),Math::random(minVelocity.y,maxVelocity.y));
+			p.radius = (int)Math::random((float)minRadius,(float)maxRadius);
+			p.startColor = startColor;
+			p.endColor = endColor;
 			particles.push_back(p);
 
 			return p;
@@ -43,17 +43,8 @@ namespace Engine {
 			minRadius = maxRadius = 10;
 			sizeDelta = 0;
 			startColor = endColor = RGB(255,255,255);
-			particles = vector<Particle*>();
+			particles = vector<Particle>();
 			dead = false;
-		}
-
-		~ParticleSystem() {
-			if (particles.size() > 0)
-			particles.erase(std::remove_if(particles.begin(), particles.end(), 
-			[](Particle* p) {
-				delete p;
-				return true;
-			}), particles.end());
 		}
 
 		virtual bool isDead() {
@@ -62,15 +53,14 @@ namespace Engine {
 
 		virtual void update(float dt) {
 			for (unsigned int i = 0; i < particles.size(); i++) {
-				Particle* p = particles[i];
-				p->update(dt);
-				p->radius = (int)(p->radius + (sizeDelta * dt));
+				Particle& p = particles[i];
+				p.update(dt);
+				p.radius = (int)(p.radius + (sizeDelta * dt));
 			}
 
 			particles.erase(std::remove_if(particles.begin(), particles.end(), 
-				[](Particle* p) {
-					if (p->isDead()) {
-						delete p;
+				[](Particle& p) {
+					if (p.isDead()) {
 						return true;
 					}
 
@@ -84,8 +74,8 @@ namespace Engine {
 
 		virtual void draw(EnhancedGraphics& g) {
 			for (unsigned int i = 0; i < particles.size(); i++) {
-				Particle* p = particles[i];
-				p->draw(g);
+				Particle p = particles[i];
+				p.draw(g);
 			}
 		}
 

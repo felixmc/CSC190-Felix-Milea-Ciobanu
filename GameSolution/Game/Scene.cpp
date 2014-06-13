@@ -2,12 +2,12 @@
 #include "Matrix3.h"
 #include "EngineMath.h"
 #include "Particle.h"
+#include "DebugMemory.h"
 
 const float Scene::STAR_FREQ = 0.00015f;
 const float Scene::SHINE_FREQ = 0.01f;
 
 Scene::Scene(float w, float h) : WIDTH(w*1), HEIGHT(h*1), VIEW_WIDTH(w), VIEW_HEIGHT(w) {
-	stars = new vector<Star>();
 	for (float y = 0; y < HEIGHT; y++) {
 		for (float x = 0; x < WIDTH; x++) {
 			float prob = (float) (rand()) / (float) (RAND_MAX);
@@ -23,20 +23,15 @@ Scene::Scene(float w, float h) : WIDTH(w*1), HEIGHT(h*1), VIEW_WIDTH(w), VIEW_HE
 				} else if (prob <= 1.0f) {
 					star.color = RGBA(255,50,10,0);
 				}
-				stars->push_back(star);
+				stars.push_back(star);
 			}
 		}
 	}
 }
 
-Scene::~Scene() {
-	stars->clear();
-	delete stars;
-}
-
 const int radius = 4;
 const float ps = 2 * Engine::Math::PI * radius;
-int * Scene::starBitmap = new int[(radius*2)*(radius*2)];
+int Scene::starBitmap[(radius*2)*(radius*2)];
 
 void Scene::init() {
 	const int startColor = RGBA(255,255,0,150);
@@ -68,24 +63,24 @@ void Scene::init() {
 
 void Scene::update(float dt) {
 	offset += velocity * dt;
-	for (unsigned int i = 0; i < stars->size(); i++) {
+	for (unsigned int i = 0; i < stars.size(); i++) {
 		float prob = (float) (rand()) / (float) (RAND_MAX);
 		if (prob < .03f) {
-			stars->at(i).state = (stars->at(i).state + 1) % 50;
+			stars.at(i).state = (stars.at(i).state + 1) % 50;
 		}
 	}
 }
 
 void Scene::draw(Engine::EnhancedGraphics& g) {
-	for (unsigned int i = 0; i < stars->size(); i++) {
+	for (unsigned int i = 0; i < stars.size(); i++) {
 
-		Vector2 p = stars->at(i).position + offset;
+		Vector2 p = stars.at(i).position + offset;
 		while (p.x < 0) { p.x += WIDTH; }
 		while (p.y < 0) { p.y += HEIGHT; }
 		while (p.x > WIDTH) { p.x -= WIDTH; }
 		while (p.y > HEIGHT) { p.y -= HEIGHT; }
 
-		if (stars->at(i).state == 12) {
+		if (stars.at(i).state == 12) {
 			g.drawBitmap(Vector2(p.x - radius,p.y - radius), radius*2, radius*2, starBitmap);
 		} else {
 			/*int radius = 2;
@@ -100,7 +95,7 @@ void Scene::draw(Engine::EnhancedGraphics& g) {
 				}
 			}*/
 
-			g.setColor(stars->at(i).color);
+			g.setColor(stars.at(i).color);
 			g.drawPoint(p);		
 		}
 	}	

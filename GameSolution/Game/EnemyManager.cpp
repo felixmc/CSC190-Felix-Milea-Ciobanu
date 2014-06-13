@@ -1,7 +1,6 @@
 #include "EnemyManager.h"
 #include "EngineMath.h"
 #include "Game.h"
-#include "DebugMemory.h"
 
 EnemyManager::EnemyManager() {
 	enemies = vector<Enemy*>();
@@ -10,23 +9,19 @@ EnemyManager::EnemyManager() {
 }
 
 EnemyManager::~EnemyManager() {
-	enemies.erase(std::remove_if(enemies.begin(), enemies.end(), 
-	[](Enemy* p) {
-		delete p;
-		return true;
-	}), enemies.end());
 
-	queue.erase(std::remove_if(queue.begin(), queue.end(), 
-	[](Enemy* p) {
-		delete p;
-		return true;
-	}), queue.end());
+	for (unsigned int i = 0; i < enemies.size(); i++) {
+		delete enemies.at(i);
+	}
 
-	projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), 
-		[](EnemyProjectile* p) {
-		delete p;
-		return true;
-	}), projectiles.end());
+	for (unsigned int i = 0; i < queue.size(); i++) {
+		delete queue.at(i);
+	}
+
+	for (unsigned int i = 0; i < projectiles.size(); i++) {
+		delete projectiles.at(i);
+	}
+
 }
 
 void EnemyManager::update(float dt) {
@@ -38,6 +33,7 @@ void EnemyManager::update(float dt) {
 
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(), 
 		[&](Enemy* p) {
+			//if (p == NULL) return true;
 			p->update(dt);
 			return p->isDead;
 	}), enemies.end());
@@ -59,14 +55,15 @@ void EnemyManager::update(float dt) {
 }
 
 void EnemyManager::add(Enemy * e) {
-	enemies.push_back(e);
+	queue.push_back(e);
 }
 
-void EnemyManager::spawnMinion(GameObject * object, Vector2& pos) {
-	EnemyMinionShip * enemy = new EnemyMinionShip(object);
+EnemyMinionShip* EnemyManager::spawnMinion(GameObject * target, Vector2& pos) {
+	EnemyMinionShip * enemy = new EnemyMinionShip(target);
 	enemy->position = pos;
 	enemy->rotation = Math::random(0,2*Math::PI);
-	enemies.push_back(enemy);
+	queue.push_back(enemy);
+	return enemy;
 }
 
 void EnemyManager::draw(EnhancedGraphics& g) {

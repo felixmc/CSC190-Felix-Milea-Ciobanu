@@ -14,9 +14,9 @@ namespace Game {
 
 	extern const int SCREEN_WIDTH;
 	extern const int SCREEN_HEIGHT;
-	extern Engine::ParticleManager* particleManager;
-	extern PlayerShip * player;
-	extern EnemyManager * enemyManager;
+	extern Engine::ParticleManager particleManager;
+	extern PlayerShip player;
+	extern EnemyManager enemyManager;
 	extern Timer timer;
 	extern GameState gameState;
 	extern GameMenu gameMenu;
